@@ -1,0 +1,13 @@
+node_modules
+.storybook
+storybook-static
+dist
+coverage
+*.js
+*.json
+*.md
+*.mdx
+*.html
+*.log
+*.snap
+playwright.config.ts

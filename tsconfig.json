@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "strictFunctionTypes": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "removeComments": true,
+    "allowJs": true,
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    "noUnusedLocals": true,
+    "baseUrl": "./src",
+    "paths": {
+      "app": ["./app"],
+      "app/*": ["./app/*"],
+      "pages": ["./pages"],
+      "pages/*": ["./pages/*"],
+      "widgets": ["./widgets"],
+      "widgets/*": ["./widgets/*"],
+      "features": ["./features"],
+      "features/*": ["./features/*"],
+      "entities": ["./entities"],
+      "entities/*": ["./entities/*"],
+      "shared": ["./shared"],
+      "shared/*": ["./shared/*"],
+      "typings": ["../typings"],
+      "typings/*": ["../typings/*"]
+    },
+    "typeRoots": [
+      "shared/**/*.ts"
+    ]
+  },
+  "include": [
+    "vite.config.ts",
+    "tailwind.config.js",
+    "./src/**/*",
+    "./typings/**/*",
+  ],
+  "exclude": ["node_modules", ".husky"]
+}
