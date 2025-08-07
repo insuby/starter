@@ -186,7 +186,7 @@ const App: FC = () => {
                       />
                     </div>
                     <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-3">
-                      <div className="flex flex-col h-fit">
+                      <div className="flex h-fit flex-col">
                         <h1 className="m-0 text-4xl font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg">
                           {commissioner.fio.split(' ').slice(-1)[0]}
                         </h1>
