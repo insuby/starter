@@ -14,7 +14,7 @@ export const PERFORMANCE_CONSTANTS = {
 
   // Скорость анимации Marquee (в секундах)
   MARQUEE_SPEED: {
-    FAST: 1100,
+    FAST: 300, // Ускорено с 1100 до 300 секунд
     MINUTE: 65,
   },
 
@@ -24,4 +24,3 @@ export const PERFORMANCE_CONSTANTS = {
     HORIZONTAL: 60000,
   },
 } as const;
-

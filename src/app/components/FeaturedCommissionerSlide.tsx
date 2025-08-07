@@ -29,8 +29,8 @@ const FeaturedCommissionerSlide: FC<FeaturedCommissionerSlideProps> = memo(
               className="absolute inset-0 z-0 h-full object-cover"
             />
           </div>
-          <div className="absolute bottom-6 left-2 z-10 flex w-2/5 flex-col">
-            <span className="font-rubik-mono text-[28px] uppercase leading-tight tracking-tight text-white drop-shadow-lg">
+          <div className="absolute bottom-8 left-4 z-10 flex w-[38%] flex-col">
+            <span className="font-rubik-mono text-[27px] uppercase leading-tight tracking-tight text-white drop-shadow-lg">
               {lastName}
             </span>
             <h1 className="font-oswald-bold text-xl uppercase leading-tight tracking-wide text-white drop-shadow-lg">

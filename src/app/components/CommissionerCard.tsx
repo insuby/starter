@@ -2,8 +2,9 @@ import type { FC } from 'react';
 import { memo } from 'react';
 import Slider from 'react-slick';
 
-import { SLIDER_SETTINGS } from '../constants/slider-settings';
-import type { Commissioner } from '../types/commissioner';
+import { SLIDER_SETTINGS } from 'app/constants';
+import type { Commissioner } from 'app/types';
+
 import OptimizedImage from './OptimizedImage';
 
 type CommissionerCardProps = {

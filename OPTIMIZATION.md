@@ -40,7 +40,15 @@
 - Плавные переходы при загрузке
 - Обработка ошибок загрузки
 
-### 8. Структурные улучшения
+### 8. Оптимизация Marquee
+- **VirtualizedCommissionerList** - виртуализированный список комиссаров
+- **useLazyMarquee** - хук для ленивой загрузки Marquee
+- Ускорение анимации с 1100с до 300с
+- Ограничение отображения до 20 пар для быстрого рендера
+- Отключение паузы при наведении для ускорения
+- Индикатор загрузки и прогресса
+
+### 9. Структурные улучшения
 - Индексные файлы для экспорта
 - Четкое разделение ответственности
 - Типизация всех компонентов
@@ -72,6 +80,7 @@ src/app/
 │   ├── CommissionerCard.tsx
 │   ├── FeaturedCommissionerSlide.tsx
 │   ├── OptimizedImage.tsx
+│   ├── VirtualizedCommissionerList.tsx
 │   └── index.ts
 ├── constants/
 │   ├── performance.ts
@@ -82,6 +91,7 @@ src/app/
 ├── hooks/
 │   ├── useCommissionerPairs.ts
 │   ├── useImagePreloader.ts
+│   ├── useLazyMarquee.ts
 │   └── index.ts
 ├── styles/
 │   └── main.scss
