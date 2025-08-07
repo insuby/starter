@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick.css';
 
 import { Marquee } from '@devnomic/marquee';
 
-import type { FC } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 
@@ -203,7 +202,7 @@ const App = () => {
                       <h2 className="m-0 text-xl font-bold uppercase tracking-wide text-white drop-shadow-lg">
                         {commissioner.position}
                       </h2>
-                      <p className="m-0 text-base whitespace-pre-wrap font-medium text-white opacity-90">
+                      <p className="m-0 whitespace-pre-wrap text-base font-medium text-white opacity-90">
                         {commissioner.region}
                       </p>
 
@@ -390,7 +389,7 @@ const App = () => {
                       className="flex max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-5 shadow-lg backdrop-blur-sm"
                     >
                       <div className="mb-2 flex h-40 shrink-0 items-start gap-2 overflow-hidden">
-                        <div className="w-28 min-h-64 overflow-hidden rounded">
+                        <div className="h-full w-28 overflow-hidden rounded">
                           <img
                             src={`/images/${commissioner.photo}`}
                             alt={`Фото ${commissioner.fio}`}

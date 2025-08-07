@@ -5,55 +5,10 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      colors: {
-        brand: {
-          yellow: '#ffb443',
-          white: '#fff',
-          purpule: '#876aff',
-          'violet-60': '#9159e0',
-          'violet-50': '#a565ff',
-          'violet-20': '#e9e0ff',
-          'violet-10': '#f3f1ff',
-          'green-50': '#5bb678',
-          'green-40': '#51d079',
-          'green-10': '#dffde9',
-          'red-50': '#ff495f',
-          'red-10': '#ffe9eb',
-          'gray-95': '#232325',
-          'gray-80': '#323036',
-          'gray-70': '#4d4d52',
-          'gray-50': '#929399',
-          'gray-40': '#afb1b8',
-          'gray-20': '#e6e8ed',
-          'gray-15': '#eef0f5',
-          'gray-10': '#f5f7fc',
-        },
+      fontFamily: {
+        'oswald': ['Oswald', 'sans-serif'],
+        'rubik': ['Rubik Mono One', 'monospace' ],
       },
-      borderRadius: {
-        'brand-16': '16px',
-        'brand-32': '32px',
-        'brand-100': '100px',
-      },
-      width: {
-        '15': '60px',
-      },
-      height: {
-        '15': '60px',
-      },
-      borderWidth: {
-        '3': '3px',
-      },
-      animation: {
-        'scroll-up': 'scrollUp 30s linear infinite',
-      },
-      keyframes: {
-        scrollUp: {
-          '0%': { transform: 'translateY(0)' },
-          '100%': { transform: 'translateY(-50%)' },
-        },
-      },
-      // Добавляем стили для marquee, чтобы они не конфликтовали с Tailwind
-      important: true,
     },
   },
   plugins: [
@@ -61,40 +16,6 @@ module.exports = {
       addUtilities({
         '.flex-center': {
           '@apply flex items-center justify-center': '',
-        },
-      });
-      
-      addComponents({
-        '.slick-dots': {
-          '@apply bottom-1': '',
-          '& li': {
-            '@apply mx-0.5': '',
-            '& button:before': {
-              '@apply text-xs text-blue-500': '',
-            },
-            '&.slick-active button:before': {
-              '@apply text-blue-700': '',
-            },
-          },
-        },
-        '.slick-prev, .slick-next': {
-          '@apply w-5 h-5': '',
-          '&:before': {
-            '@apply text-base text-blue-500': '',
-          },
-        },
-        '.slick-prev': {
-          '@apply -left-6': '',
-        },
-        '.slick-next': {
-          '@apply -right-6': '',
-        },
-        // Стили для marquee
-        '.marquee': {
-          '@apply overflow-hidden': '',
-        },
-        '.marquee-content': {
-          '@apply flex flex-col': '',
         },
       });
     }),
