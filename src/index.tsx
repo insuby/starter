@@ -1,3 +1,5 @@
+import './index.css';
+
 import App from 'app';
 
 import { StrictMode } from 'react';

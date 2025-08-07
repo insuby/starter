@@ -34,6 +34,26 @@ module.exports = {
         'brand-32': '32px',
         'brand-100': '100px',
       },
+      width: {
+        '15': '60px',
+      },
+      height: {
+        '15': '60px',
+      },
+      borderWidth: {
+        '3': '3px',
+      },
+      animation: {
+        'scroll-up': 'scrollUp 30s linear infinite',
+      },
+      keyframes: {
+        scrollUp: {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-50%)' },
+        },
+      },
+      // Добавляем стили для marquee, чтобы они не конфликтовали с Tailwind
+      important: true,
     },
   },
   plugins: [
@@ -41,6 +61,40 @@ module.exports = {
       addUtilities({
         '.flex-center': {
           '@apply flex items-center justify-center': '',
+        },
+      });
+      
+      addComponents({
+        '.slick-dots': {
+          '@apply bottom-1': '',
+          '& li': {
+            '@apply mx-0.5': '',
+            '& button:before': {
+              '@apply text-xs text-blue-500': '',
+            },
+            '&.slick-active button:before': {
+              '@apply text-blue-700': '',
+            },
+          },
+        },
+        '.slick-prev, .slick-next': {
+          '@apply w-5 h-5': '',
+          '&:before': {
+            '@apply text-base text-blue-500': '',
+          },
+        },
+        '.slick-prev': {
+          '@apply -left-6': '',
+        },
+        '.slick-next': {
+          '@apply -right-6': '',
+        },
+        // Стили для marquee
+        '.marquee': {
+          '@apply overflow-hidden': '',
+        },
+        '.marquee-content': {
+          '@apply flex flex-col': '',
         },
       });
     }),
