@@ -4,7 +4,7 @@ import 'slick-carousel/slick/slick.css';
 
 import { Marquee } from '@devnomic/marquee';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Slider from 'react-slick';
 
 import cvoData from './data/cvo.json';
@@ -68,11 +68,8 @@ const App = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
-    autoplay: false,
-    pauseOnHover: false,
-    beforeChange: (oldIndex: number, newIndex: number) => {
-      setCurrentSlide(newIndex);
-    },
+    autoplay: true,
+    autoplaySpeed: 60000,
   };
 
   const featuredCommissioners = [
@@ -106,24 +103,6 @@ const App = () => {
     },
   ];
 
-  // Эффект для автоматического переключения слайдов после прокрутки текста
-  useEffect(() => {
-    if (isPaused) return; // Не переключаем если на паузе
-
-    // Фиксированное время прокрутки - 1 минута
-    const scrollDuration = 60000; // 60 секунд
-    const pauseDuration = 0; // Без паузы
-
-    const timer = setTimeout(() => {
-      if (sliderRef.current && !isPaused) {
-        const nextSlide = (currentSlide + 1) % featuredCommissioners.length;
-        sliderRef.current.slickGoTo(nextSlide);
-      }
-    }, scrollDuration + pauseDuration);
-
-    return () => clearTimeout(timer);
-  }, [currentSlide, featuredCommissioners, isPaused]);
-
   return (
     <div className="mx-auto flex h-screen w-[720px] flex-col overflow-hidden bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900">
       <div className="flex size-full flex-col gap-[20px]">
@@ -141,46 +120,43 @@ const App = () => {
                   onMouseEnter={() => setIsPaused(true)}
                   onMouseLeave={() => setIsPaused(false)}
                 >
-                  <div className="flex size-full gap-8 text-white">
-                    <div className="flex flex-col justify-between">
+                  <div className="relative flex size-full gap-8 overflow-hidden rounded-[32px] text-white">
+                    <div className="relative h-full w-2/5">
+                      <div className="absolute inset-0 z-10 size-full bg-gradient-to-t from-black via-[#00000010] via-45% to-transparent" />
                       <img
                         src={`/images/${commissioner.photo}`}
                         alt={`Фото ${commissioner.fio}`}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
+                        className="absolute inset-0 z-0 h-full object-cover"
                       />
-                      <div className="flex h-fit flex-col">
-                        <span className="m-0 text-3xl font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg">
-                          {commissioner.fio.split(' ').slice(-1)[0]}
-                        </span>
-                        <h1 className="m-0 text-2xl font-bold uppercase leading-tight tracking-wide text-white drop-shadow-lg">
-                          {commissioner.fio.split(' ').slice(0, 1).join(' ')}
-                        </h1>
-                        <h1 className="m-0 text-2xl font-bold uppercase leading-tight tracking-wide text-white drop-shadow-lg">
-                          {commissioner.fio.split(' ').slice(1, -1).join(' ')}
-                        </h1>
-
-                        <span className="m-0 text-lg font-semibold text-white drop-shadow">
-                          {commissioner.birthdate}
-                        </span>
-                      </div>
                     </div>
-                    <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-3">
-                      <h2 className="m-0 text-xl font-bold uppercase tracking-wide text-white drop-shadow-lg">
+                    <div className="absolute bottom-6 left-2 z-10 flex w-2/5 flex-col">
+                      <span className="font-rubik-mono text-3xl text-[28px] uppercase leading-tight tracking-tight text-white drop-shadow-lg">
+                        {commissioner.fio.split(' ').slice(-1)[0]}
+                      </span>
+                      <h1 className="font-oswald-bold text-xl uppercase leading-tight tracking-wide text-white drop-shadow-lg">
+                        {commissioner.fio.split(' ').slice(0, 1).join(' ')}
+                      </h1>
+                      <span className="font-oswald-medium text-xl uppercase leading-tight tracking-wide text-white drop-shadow-lg">
+                        {commissioner.fio.split(' ').slice(1, -1).join(' ')}
+                      </span>
+                      <span className="absolute -bottom-6 right-6  text-gray-200">
+                        {commissioner.birthdate}
+                      </span>
+                    </div>
+                    <div className="flex flex-1 flex-col gap-0 overflow-y-auto pr-3">
+                      <h2 className="font-rubik-mono m-0 text-xl uppercase tracking-wide text-white drop-shadow-lg">
                         {commissioner.position}
                       </h2>
-                      <p className="m-0 whitespace-pre-wrap text-base font-medium text-white opacity-90">
+                      <p className="font-oswald-light m-0 whitespace-pre-wrap text-base text-white opacity-90">
                         {commissioner.region}
                       </p>
 
-                      <div className="flex-1 overflow-hidden">
+                      <div className="mt-10 flex-1 overflow-hidden">
                         <Marquee
                           direction="up"
                           className="minute-scroll h-full"
                           fade
-                          numberOfCopies={1}
+                          numberOfCopies={2}
                         >
                           <div className="space-y-2">
                             {commissioner.description
@@ -188,7 +164,7 @@ const App = () => {
                               .map((paragraph, index) => (
                                 <p
                                   key={index}
-                                  className="m-0 text-justify indent-4 text-sm leading-tight text-white"
+                                  className="font-oswald-regular m-0 text-justify indent-4 text-sm leading-tight text-white"
                                 >
                                   {paragraph.trim()}
                                 </p>
@@ -223,74 +199,46 @@ const App = () => {
                     className="flex max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-4 shadow-lg backdrop-blur-sm"
                   >
                     <div className="mb-2 flex h-32 shrink-0 items-start gap-3">
-                      <div className="size-24 overflow-hidden rounded">
+                      <div className="h-full w-24 overflow-hidden rounded">
                         <img
                           src={`/images/${commissioner.photo}`}
                           alt={`Фото ${commissioner.fio}`}
                           className="size-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const names = commissioner.fio.split(' ');
-                            const lastName = names[0];
-                            const firstName = names[1] || '';
-                            const middleName = names[2] || '';
-                            target.parentElement!.innerHTML =
-                              '<div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-blue-700 text-xs font-bold text-white">' +
-                              '<div>' +
-                              lastName +
-                              '</div>' +
-                              '<div>' +
-                              firstName +
-                              ' ' +
-                              middleName +
-                              '</div>' +
-                              '</div>';
-                          }}
                         />
                       </div>
 
                       <div className="relative flex-1">
                         <div className="absolute right-0 top-0 flex flex-col items-center gap-1">
-                          <div className="h-5 w-10 overflow-hidden">
+                          <div className="h-4 w-8 overflow-hidden">
                             <img
                               src={`/images/${commissioner.flag}`}
                               alt={`Флаг ${commissioner.fio}`}
                               className="size-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                              }}
                             />
                           </div>
-                          <div className="size-6 overflow-hidden">
+                          <div className="mt-2 size-4 overflow-hidden">
                             <img
                               src={`/images/${commissioner.gerb}`}
                               alt={`Герб ${commissioner.fio}`}
                               className="size-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                              }}
                             />
                           </div>
                         </div>
-
+                        <p className="font-oswald-regular m-0 whitespace-pre-wrap text-xs leading-none text-gray-200">
+                          {commissioner.position}
+                        </p>
+                        <p className="font-oswald-regular m-0 mt-1 text-xs text-gray-300 ">
+                          {commissioner.rank}
+                        </p>
                         <div className="flex flex-col gap-1">
-                          <span className="text-lg font-black text-white">
+                          <span className="font-rubik-mono text-lg text-white">
                             {commissioner.fio.split(' ')[0]}
                           </span>
-                          <span className="text-sm text-gray-300">
+                          <span className="font-oswald-medium -mt-2.5 text-sm text-gray-300">
                             {commissioner.fio.split(' ').slice(1).join(' ')}
                           </span>
                         </div>
-                        <p className="m-0 text-sm font-medium text-gray-300">
-                          {commissioner.rank}
-                        </p>
-                        <p className="m-0 text-sm leading-none text-gray-200">
-                          {commissioner.position}
-                        </p>
-                        <p className="m-0 text-xs text-gray-400">
+                        <p className="font-oswald-light m-0 mt-1 text-xs text-gray-400">
                           {commissioner.birthdate}
                         </p>
                       </div>
@@ -298,25 +246,24 @@ const App = () => {
 
                     <div className="flex min-h-0 flex-1 flex-col gap-2">
                       <div className="h-20 shrink-0">
-                        <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
+                        <h5 className="font-rubik-mono m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm text-white">
                           Последняя должность:
                         </h5>
                         <div className="h-12 overflow-hidden">
-                          <div className="flex flex-col gap-0">
-                            <p className="m-0 line-clamp-1 text-sm leading-none text-gray-200">
+                          <div className="flex flex-col gap-1">
+                            <p className="font-oswald-regular m-0 text-sm leading-none text-gray-200">
                               {commissioner.last_position.title}
                             </p>
-                            <p className="m-0 line-clamp-1 text-xs italic text-gray-400">
+                            <p className="font-oswald-light m-0 text-xs italic text-gray-400">
                               {commissioner.last_position.date_1} -{' '}
                               {commissioner.last_position.date_2}
                             </p>
-                            <div className="h-4"></div>
                           </div>
                         </div>
                       </div>
 
                       <div className="h-20 shrink-0">
-                        <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
+                        <h5 className="font-rubik-mono m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm text-white">
                           Награды:
                         </h5>
                         <div className="h-12 overflow-hidden">
@@ -328,14 +275,14 @@ const App = () => {
                             commissioner.medals.length > 0 ? (
                               commissioner.medals.map((medal, medalIndex) => (
                                 <div key={medalIndex} className="h-4">
-                                  <p className="m-0 line-clamp-1 text-xs leading-none text-gray-200">
+                                  <p className="font-oswald-regular m-0 line-clamp-1 text-xs leading-none text-gray-200">
                                     {medal}
                                   </p>
                                 </div>
                               ))
                             ) : (
-                              <div className="h-4">
-                                <p className="m-0 text-xs leading-none text-gray-200">
+                              <div className="h-2">
+                                <p className="font-oswald-light m-0 text-xs leading-none text-gray-200">
                                   отсутствуют
                                 </p>
                               </div>
@@ -345,7 +292,7 @@ const App = () => {
                       </div>
 
                       <div className="h-20 shrink-0">
-                        <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
+                        <h5 className="font-rubik-mono m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm text-white">
                           Достижения:
                         </h5>
                         <div className="h-12 overflow-hidden">
@@ -358,15 +305,15 @@ const App = () => {
                               commissioner.achievement.map(
                                 (achievement, achievementIndex) => (
                                   <div key={achievementIndex} className="h-4">
-                                    <p className="m-0 line-clamp-1 text-xs leading-none text-gray-200">
+                                    <p className="font-oswald-regular m-0 line-clamp-1 text-xs leading-none text-gray-200">
                                       {achievement}
                                     </p>
                                   </div>
                                 ),
                               )
                             ) : (
-                              <div className="h-4">
-                                <p className="m-0 text-xs leading-none text-gray-200">
+                              <div className="h-2">
+                                <p className="font-oswald-light m-0 text-xs leading-none text-gray-200">
                                   отсутствуют
                                 </p>
                               </div>

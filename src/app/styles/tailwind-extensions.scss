@@ -41,4 +41,28 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+
+  .font-rubik-mono {
+    font-family: 'Rubik Mono One', monospace;
+  }
+
+  .font-oswald-light {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+  }
+
+  .font-oswald-regular {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+  }
+
+  .font-oswald-medium {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+  }
+
+  .font-oswald-bold {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+  }
 }
