@@ -1,10 +1,11 @@
-import '@devnomic/marquee/dist/index.css';
+import './styles/main.scss';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 
 import { Marquee } from '@devnomic/marquee';
 
 import type { FC } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 
 import cvoData from './data/cvo.json';
@@ -28,6 +29,10 @@ type Commissioner = {
 
 const App: FC = () => {
   const commissioners = cvoData as unknown as Commissioner[];
+  const sliderRef = useRef<Slider>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [textScrolled, setTextScrolled] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const createCommissionerPairs = () => {
     const pairs = [];
@@ -57,64 +62,167 @@ const App: FC = () => {
     pauseOnHover: true,
   };
 
-  const malakhovskyDescription = [
-    'Генерал-майор, Первый военный комиссар Латвийской СССР в составе 2-го Прибалтийского фронта. Первый военный комиссар Калининградской области (1946- 1948). В короткие сроки создал военные комиссариаты в области и организовал их работу. За время службы был пять раз ранен и два раза контужен (одна контузия - в результате падения с подбитого аэроплана).',
-    'Участник Первой мировой войны, Георгиевский кавалер, ефрейтор в императорской армии, командир стрелкового полка, стрелковой и кавалерийской бригад, кавалерийской дивизии Красной Армии в Гражданскую войну, участник Великой Отечественной войны. Военный комиссар Керченского и Ново-Ушицкого уездов, райвоенкоматов Феодосии, Николаева, Житомира, Чернигова, офицер организационно-мобильных отделов Киевского особого и Прибалтийского военных округов, начальник отдела укомплектования 7 отдельной армии Ленинградского округа (фронта), военный комиссар Латвийской ССР и Калининградской области.',
-    'С началом Великой Отечественной войны, в короткие сроки сформировал и укомплектовал воинские части на направлении прорыва белофинов в районе Лайомола. Был назначен военным комендантом Петрозаводска. Организовал оборону города и лично руководил боем воинских частей гарнизона с противником, под обстрелом противника провел эвакуацию предприятий и населения.',
-    'Его имя носили пять совхозов и колхозов Воронежской области. Улицы и площади названы в честь Малаховского В.А. в городах Воронеже, Богучаре, Калаче, Острогожске, и др.',
-    'Дополнительная информация о достижениях и вкладе в развитие военного дела. Его опыт и знания были востребованы на протяжении всей карьеры.',
-    'Валентин Александрович Малаховский оставил значительный след в истории военного комиссариата и внес большой вклад в развитие военного дела в СССР.',
-    'Его военная карьера началась в императорской армии, где он проявил себя как талантливый командир. В годы Гражданской войны он командовал различными подразделениями Красной Армии.',
-    'В период Великой Отечественной войны Малаховский проявил исключительное мужество и организаторские способности. Он лично участвовал в боях и руководил обороной важных стратегических объектов.',
-    'После войны Валентин Александрович продолжил службу в военных комиссариатах, где внес значительный вклад в развитие системы военного управления и подготовки кадров.',
-    'Его имя стало символом воинской доблести и преданности Родине. Многие улицы, площади и учреждения названы в его честь в различных городах России.',
+  const horizontalSliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    autoplay: false,
+    pauseOnHover: false,
+    beforeChange: (oldIndex: number, newIndex: number) => {
+      setCurrentSlide(newIndex);
+      setTextScrolled(false);
+    },
+  };
+
+  const featuredCommissioners = [
+    {
+      fio: 'МИХАИЛ ВАСИЛЬЕВИЧ ФРУНЗЕ',
+      birthdate: '(1885-1925)',
+      position: 'ВОЕННЫЙ КОМИССАР',
+      region:
+        'Латвийской СССР (1943-1946)\nКалининградской области (1946-1948)',
+      description: `Советский военачальник, революционер, военный теоретик. Один из наиболее талантливых полководцев Красной армии времён Гражданской войны. Народный комиссар по военным и морским делам СССР (1924-1925), председатель Реввоенсовета СССР, нарком по военным и морским делам СССР.
+В 1920 году Фрунзе был назначен командующим Туркестанским фронтом и военным комиссаром Туркестанской ССР. Под его руководством были проведены успешные операции по ликвидации басмачества в Средней Азии. Фрунзе проявил себя как талантливый организатор и стратег, сумевший в короткие сроки наладить работу военных комиссариатов в регионе.
+В период его руководства Туркестанским фронтом были созданы эффективные системы мобилизации и подготовки военных кадров. Фрунзе внес значительный вклад в развитие военной теории, разработав концепцию единой военной доктрины. Его труды по военному искусству стали классикой советской военной мысли.
+После смерти Фрунзе его именем были названы многие города, улицы, военные училища и корабли. В Москве, Бишкеке, Самаре и других городах установлены памятники этому выдающемуся военачальнику.`,
+      photo: 'main/фрунзе.png',
+    },
+    {
+      fio: 'ГРИГОРИЙ КУЗЬМИЧ ЧЕРНЫХ',
+      birthdate: '(1898-1961)',
+      position: 'ВОЕННЫЙ КОМИССАР',
+      region: 'города Москвы (1939-1958)',
+      description: `Генерал-майор, участник Первой мировой войны и Гражданской войн, военный комиссар Московского военного комиссариата. Проходил военную службу на воинских должностях в Красной Армиии, в уездных военных комиссариатах Брянской губернии, военным комиссаром Витебского и Калининского областных военкоматов.
+В должности военного комиссара г. Москвы в годы Великой Отечественной войны обеспечил регулярное пополнение личным составом армейских подразделений, формирование резервных частей, комплектование военных училищ, провёл, мобилизацию трудящихся в дивизии народного ополчения. Было сформировано и отправлено на фронт 12 дивизий народного ополчения.
+Большая работа была проведена по организации всеобщей военной подготовки населения. Было подготовлено более 200 тысяч человек по воинским специальностям. Из них 11233 снайпера, 6332 связиста, 23000 станковых пулемётчиков, 15283 миномётчиков, 12906 истребителей военкоматами Москвы было мобилизовано более 713 тысяч военнообязанных, сформировано 235 войсковых частей, направлено в войска более 25 тысяч единиц автомобилей
+и другой техники.
+После окончания Великой Отечественной войны провел масштабную работу по приему увольняемых военнослужащих на воинский учет, их трудовым и бытовым устройством.
+Учрежден кубок имени генерал-майора Черных Г.К. которым награждается лучший военный комиссариат г. Москвы`,
+      photo: 'main/черных.png',
+    },
+    {
+      fio: 'АЛЕКСЕЙ МИХАЙЛОВИЧ КУЗЬМИН',
+      birthdate: '(1891-1980)',
+      position: 'ВОЕННЫЙ КОМИССАР',
+      region: 'Московской области (1938-1945)',
+      description: `Советский военачальник, генерал-лейтенант, участник Первой мировой и Гражданской войн. Военный комиссар Московской области в годы Великой Отечественной войны. Внес значительный вклад в организацию обороны Москвы и подготовку военных кадров.
+В период Великой Отечественной войны Кузьмин руководил военными комиссариатами Московской области, обеспечивая мобилизацию населения и формирование воинских частей. Под его руководством были созданы эффективные системы подготовки резервов для фронта.
+Кузьмин проявил себя как талантливый организатор военного дела, сумевший в сложных условиях военного времени наладить работу военных комиссариатов области. Его деятельность способствовала успешному проведению мобилизационных мероприятий и подготовке кадров для Красной Армии.
+После войны продолжил службу в военных комиссариатах, внеся значительный вклад в развитие системы военного управления. Его опыт и знания были востребованы в послевоенный период восстановления страны.`,
+      photo: 'main/кузьмин.png',
+    },
   ];
+
+  // Эффект для отслеживания прокрутки текста и переключения слайдов
+  useEffect(() => {
+    if (textScrolled) {
+      const timer = setTimeout(() => {
+        if (sliderRef.current) {
+          const nextSlide = (currentSlide + 1) % featuredCommissioners.length;
+          sliderRef.current.slickGoTo(nextSlide);
+        }
+      }, 2000); // Ждем 2 секунды после завершения прокрутки
+
+      return () => clearTimeout(timer);
+    }
+  }, [textScrolled, currentSlide, featuredCommissioners.length]);
+
+  // Эффект для автоматического переключения слайдов после прокрутки текста
+  useEffect(() => {
+    if (isPaused) return; // Не переключаем если на паузе
+
+    // Рассчитываем время прокрутки на основе длины текста
+    const getScrollDuration = (text: string) => {
+      const wordsPerMinute = 200; // Скорость чтения
+      const words = text.split(' ').length;
+      const minutes = words / wordsPerMinute;
+      return Math.max(minutes * 60 * 1000, 8000); // Минимум 8 секунд
+    };
+
+    const currentDescription = featuredCommissioners[currentSlide].description;
+    const scrollDuration = getScrollDuration(currentDescription);
+    const pauseDuration = 2000; // 2 секунды паузы
+
+    const timer = setTimeout(() => {
+      if (sliderRef.current && !isPaused) {
+        const nextSlide = (currentSlide + 1) % featuredCommissioners.length;
+        sliderRef.current.slickGoTo(nextSlide);
+      }
+    }, scrollDuration + pauseDuration);
+
+    return () => clearTimeout(timer);
+  }, [currentSlide, featuredCommissioners, isPaused]);
 
   return (
     <div className="mx-auto flex h-screen w-[720px] flex-col overflow-hidden bg-[lightblue]">
       <div className="flex size-full flex-col gap-[100px]">
         <div className="flex h-[35%] items-center justify-center p-5">
-          <div className="flex size-full gap-8 text-white">
-            <div className="flex w-48 shrink-0 items-start justify-center">
-              <div className="flex h-56 w-44 items-center justify-center rounded-lg border-3 border-white bg-gradient-to-br from-gray-300 to-gray-200 text-5xl font-bold text-gray-600">
-                Ф
-              </div>
-            </div>
-            <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-3">
-              <h2 className="m-0 text-2xl font-bold uppercase tracking-wider text-yellow-400 drop-shadow-lg">
-                ВОЕННЫЙ КОМИССАР
-              </h2>
-              <p className="m-0 text-base font-medium text-white opacity-90">
-                Латвийской СССР (1943-1946)
-              </p>
-              <p className="m-0 text-base font-medium text-white opacity-90">
-                Калининградской области (1946-1948)
-              </p>
-
-              <h1 className="m-0 text-3xl font-bold uppercase leading-tight tracking-wide text-white drop-shadow-lg">
-                ВАЛЕНТИН АЛЕКСАНДРОВИЧ МАЛАХОВСКИЙ
-              </h1>
-              <p className="m-0 text-lg font-semibold text-yellow-400 drop-shadow">
-                (1894-1971)
-              </p>
-
-              <div className="flex-1 overflow-hidden">
-                <Marquee
-                  direction="up"
-                  className="h-full"
-                  fade
-                  numberOfCopies={3}
+          <div className="size-full overflow-hidden">
+            <Slider
+              ref={sliderRef}
+              {...horizontalSliderSettings}
+              className="h-full"
+            >
+              {featuredCommissioners.map((commissioner, index) => (
+                <div
+                  key={index}
+                  className="flex h-full items-center justify-center"
+                  onMouseEnter={() => setIsPaused(true)}
+                  onMouseLeave={() => setIsPaused(false)}
                 >
-                  {malakhovskyDescription.map((paragraph, index) => (
-                    <div key={index} className="mb-2">
-                      <p className="m-0 text-justify text-sm leading-tight text-white">
-                        {paragraph}
-                      </p>
+                  <div className="flex size-full gap-8 text-white">
+                    <div className="relative flex w-56 shrink-0 items-start justify-center">
+                      <img
+                        src={`/images/${commissioner.photo}`}
+                        alt={`Фото ${commissioner.fio}`}
+                        className="absolute inset-0 size-full rounded-lg object-contain"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
                     </div>
-                  ))}
-                </Marquee>
-              </div>
-            </div>
+                    <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-3">
+                      <div className="flex flex-col h-fit">
+                        <h1 className="m-0 text-4xl font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg">
+                          {commissioner.fio.split(' ').slice(-1)[0]}
+                        </h1>
+                        <h1 className="m-0 text-2xl font-bold uppercase leading-tight tracking-wide text-white drop-shadow-lg">
+                          {commissioner.fio.split(' ').slice(0, -1).join(' ')}
+                        </h1>
+                      </div>
+                      <p className="m-0 text-lg font-semibold text-white drop-shadow">
+                        {commissioner.birthdate}
+                      </p>
+                      <h2 className="m-0 text-xl font-bold uppercase tracking-wide text-white drop-shadow-lg">
+                        {commissioner.position}
+                      </h2>
+                      <p className="m-0 text-base font-medium text-white opacity-90">
+                        {commissioner.region}
+                      </p>
+
+                      <div className="flex-1 overflow-hidden">
+                        <Marquee
+                          direction="up"
+                          className="h-full"
+                          fade
+                          numberOfCopies={3}
+                        >
+                          <div className="mb-2">
+                            <p className="m-0 text-justify text-sm leading-tight text-white">
+                              {commissioner.description}
+                            </p>
+                          </div>
+                        </Marquee>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Slider>
           </div>
         </div>
 
@@ -122,9 +230,9 @@ const App: FC = () => {
           <Marquee
             direction="up"
             className="slow-marquee h-full !gap-1"
-            innerClassName="h-full slow-marquee !gap-1"
+            innerClassName="!gap-1"
             fade
-            numberOfCopies={5}
+            numberOfCopies={1}
           >
             {commissionerPairs.map((pair, pairIndex) => (
               <div
@@ -162,7 +270,6 @@ const App: FC = () => {
                       </div>
                       <div className="flex-1">
                         <h4 className="m-0 w-10/12 text-base font-semibold text-gray-800">
-                          {/* Герб и флаг */}
                           <div className="absolute right-0 top-0 flex flex-col items-center gap-2">
                             <div className="h-6 w-12 overflow-hidden">
                               <img
@@ -302,7 +409,6 @@ const App: FC = () => {
                         </div>
 
                         <div className="relative flex-1">
-                          {/* Герб и флаг */}
                           <div className="absolute right-0 top-0 flex flex-col items-center gap-2">
                             <div className="h-6 w-12 overflow-hidden">
                               <img
@@ -329,37 +435,12 @@ const App: FC = () => {
                           </div>
 
                           <h4 className="m-0 w-10/12 text-base font-semibold text-gray-800">
-                            {/* Герб и флаг */}
-                            <div className="absolute right-0 top-0 flex flex-col items-center gap-2">
-                              <div className="h-6 w-12 overflow-hidden">
-                                <img
-                                  src={`/images/${commissioner.flag}`}
-                                  alt={`Флаг ${commissioner.fio}`}
-                                  className="size-full object-contain"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                  }}
-                                />
-                              </div>
-                              <div className="size-8 overflow-hidden">
-                                <img
-                                  src={`/images/${commissioner.gerb}`}
-                                  alt={`Герб ${commissioner.fio}`}
-                                  className="size-full object-contain"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                  }}
-                                />
-                              </div>
-                            </div>
                             <div className="flex flex-col">
                               <span className="font-black">
-                                {pair[0].fio.split(' ')[0]}
+                                {commissioner.fio.split(' ')[0]}
                               </span>
                               <span className="text-[10px]">
-                                {pair[0].fio.split(' ').slice(1).join(' ')}
+                                {commissioner.fio.split(' ').slice(1).join(' ')}
                               </span>
                             </div>
                           </h4>

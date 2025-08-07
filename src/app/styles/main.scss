@@ -71,3 +71,40 @@ body,
     transition-duration: var(--marquee-speed) !important;
   }
 }
+
+// Скрытие подсветки кнопок навигации слайдера
+.slick-prev,
+.slick-next {
+  &:hover,
+  &:focus {
+    background: transparent !important;
+    color: inherit !important;
+  }
+
+  &:before {
+    color: white !important;
+  }
+}
+
+.slick-dots {
+  li {
+    button {
+      &:before {
+        color: white !important;
+        opacity: 0.5 !important;
+      }
+    }
+
+    &.slick-active {
+      button {
+        &:before {
+          opacity: 1 !important;
+        }
+      }
+    }
+  }
+}
+
+.slick-list, .slick-track, .slick-slide > div {
+  height: 100%;
+}
