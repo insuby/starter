@@ -87,6 +87,23 @@ body,
   }
 }
 
+// Custom minute scroll animation for top commissioners
+.minute-scroll {
+  // Переопределяем скорость анимации для прокрутки за минуту
+  --marquee-speed: 60s; // 60 секунд на полный цикл
+
+  // Если библиотека не использует CSS переменные, пробуем переопределить animation
+  * {
+    animation-duration: var(--marquee-speed) !important;
+  }
+
+  // Альтернативный способ через transform
+  [style*='transform'] {
+    animation-duration: var(--marquee-speed) !important;
+    transition-duration: var(--marquee-speed) !important;
+  }
+}
+
 // Скрытие подсветки кнопок навигации слайдера
 .slick-prev,
 .slick-next {

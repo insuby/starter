@@ -30,7 +30,6 @@ const App = () => {
   const commissioners = cvoData as unknown as Commissioner[];
   const sliderRef = useRef<Slider>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [textScrolled, setTextScrolled] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
   const createCommissionerPairs = () => {
@@ -59,6 +58,7 @@ const App = () => {
     autoplay: true,
     autoplaySpeed: 3000,
     pauseOnHover: true,
+    adaptiveHeight: false,
   };
 
   const horizontalSliderSettings = {
@@ -72,7 +72,6 @@ const App = () => {
     pauseOnHover: false,
     beforeChange: (oldIndex: number, newIndex: number) => {
       setCurrentSlide(newIndex);
-      setTextScrolled(false);
     },
   };
 
@@ -118,35 +117,13 @@ const App = () => {
     },
   ];
 
-  // Эффект для отслеживания прокрутки текста и переключения слайдов
-  useEffect(() => {
-    if (textScrolled) {
-      const timer = setTimeout(() => {
-        if (sliderRef.current) {
-          const nextSlide = (currentSlide + 1) % featuredCommissioners.length;
-          sliderRef.current.slickGoTo(nextSlide);
-        }
-      }, 2000); // Ждем 2 секунды после завершения прокрутки
-
-      return () => clearTimeout(timer);
-    }
-  }, [textScrolled, currentSlide, featuredCommissioners.length]);
-
   // Эффект для автоматического переключения слайдов после прокрутки текста
   useEffect(() => {
     if (isPaused) return; // Не переключаем если на паузе
 
-    // Рассчитываем время прокрутки на основе длины текста
-    const getScrollDuration = (text: string) => {
-      const wordsPerMinute = 20; // Скорость чтения
-      const words = text.split(' ').length;
-      const minutes = words / wordsPerMinute;
-      return Math.max(minutes * 60 * 1000, 8000); // Минимум 8 секунд
-    };
-
-    const currentDescription = featuredCommissioners[currentSlide].description;
-    const scrollDuration = getScrollDuration(currentDescription);
-    const pauseDuration = 0; // 2 секунды паузы
+    // Фиксированное время прокрутки - 1 минута
+    const scrollDuration = 60000; // 60 секунд
+    const pauseDuration = 0; // Без паузы
 
     const timer = setTimeout(() => {
       if (sliderRef.current && !isPaused) {
@@ -201,7 +178,6 @@ const App = () => {
                       </div>
                     </div>
                     <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-3">
-
                       <h2 className="m-0 text-xl font-bold uppercase tracking-wide text-white drop-shadow-lg">
                         {commissioner.position}
                       </h2>
@@ -212,7 +188,7 @@ const App = () => {
                       <div className="flex-1 overflow-hidden">
                         <Marquee
                           direction="up"
-                          className="h-full"
+                          className="minute-scroll h-full"
                           fade
                           numberOfCopies={1}
                         >
@@ -324,17 +300,22 @@ const App = () => {
                     </div>
 
                     <div className="flex min-h-0 flex-1 flex-col gap-1">
-                      <div className="mb-2 shrink-0">
+                      <div className="h-16 shrink-0">
                         <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                           Последняя должность:
                         </h5>
-                        <p className="m-0 text-sm leading-none text-gray-200">
-                          {commissioner.last_position.title}
-                        </p>
-                        <p className="m-0 text-xs italic text-gray-400">
-                          {commissioner.last_position.date_1} -{' '}
-                          {commissioner.last_position.date_2}
-                        </p>
+                        <div className="h-12 overflow-hidden">
+                          <div className="flex flex-col gap-0">
+                            <p className="m-0 line-clamp-1 text-sm leading-none text-gray-200">
+                              {commissioner.last_position.title}
+                            </p>
+                            <p className="m-0 line-clamp-1 text-xs italic text-gray-400">
+                              {commissioner.last_position.date_1} -{' '}
+                              {commissioner.last_position.date_2}
+                            </p>
+                            <div className="h-4"></div>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="min-h-0 flex-1 overflow-hidden">
