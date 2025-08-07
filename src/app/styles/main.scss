@@ -70,6 +70,23 @@ body,
   }
 }
 
+// Custom fast marquee animation
+.fast-marquee {
+  // Переопределяем скорость анимации для быстрого движения
+  --marquee-speed: 100s; // Быстрая скорость (100 секунд на полный цикл)
+
+  // Если библиотека не использует CSS переменные, пробуем переопределить animation
+  * {
+    animation-duration: var(--marquee-speed) !important;
+  }
+
+  // Альтернативный способ через transform
+  [style*='transform'] {
+    animation-duration: var(--marquee-speed) !important;
+    transition-duration: var(--marquee-speed) !important;
+  }
+}
+
 // Скрытие подсветки кнопок навигации слайдера
 .slick-prev,
 .slick-next {

@@ -52,7 +52,7 @@ const App = () => {
     infinite: true,
     speed: 500,
     slidesToShow: 3,
-    slidesToScroll: 1,
+    slidesToScroll: 3,
     arrows: false,
     vertical: true,
     verticalSwiping: true,
@@ -79,7 +79,7 @@ const App = () => {
   const featuredCommissioners = [
     {
       fio: 'ВАЛЕНТИН АЛЕКСАНДРОВИЧ МАЛАХОВСКИЙ',
-      birthdate: '(1894-1971)',
+      birthdate: '1894-1971 гг.',
       position: 'ВОЕННЫЙ КОМИССАР',
       region:
         'Латвийской СССР (1943-1946)\nКалининградской области (1946-1948)',
@@ -92,7 +92,7 @@ const App = () => {
     },
     {
       fio: 'Иван Васильевич Панфилов',
-      birthdate: '(1893-1941)',
+      birthdate: '1893-1941 гг.',
       position: 'ВОЕННЫЙ КОМИССАР',
       region: 'Киргизской ССР (1938-1941)',
       description: `Генерал-майор, Герой Советского Союза, военный комиссар Киргизской, участник Первой мировой войны, фельдфебель императорской армии, в Красной Армии командир взвода, роты в 25-й стрелковой (Чапаевской) дивизии, начальник пограничного поста, командир Памирского отряда, командир батальона, командир 9-го отдельного Туркестанского Краснознаменного горнострелкового полка.
@@ -105,7 +105,7 @@ const App = () => {
     },
     {
       fio: 'ГРИГОРИЙ КУЗЬМИЧ ЧЕРНЫХ',
-      birthdate: '(1898-1961)',
+      birthdate: '1898-1961 гг.',
       position: 'ВОЕННЫЙ КОМИССАР',
       region: 'города Москвы (1939-1958)',
       description: `Генерал-майор, участник Первой мировой войны и Гражданской войн, военный комиссар Московского военного комиссариата. Проходил военную службу на воинских должностях в Красной Армиии, в уездных военных комиссариатах Брянской губернии, военным комиссаром Витебского и Калининского областных военкоматов.
@@ -138,7 +138,7 @@ const App = () => {
 
     // Рассчитываем время прокрутки на основе длины текста
     const getScrollDuration = (text: string) => {
-      const wordsPerMinute = 200; // Скорость чтения
+      const wordsPerMinute = 20; // Скорость чтения
       const words = text.split(' ').length;
       const minutes = words / wordsPerMinute;
       return Math.max(minutes * 60 * 1000, 8000); // Минимум 8 секунд
@@ -146,7 +146,7 @@ const App = () => {
 
     const currentDescription = featuredCommissioners[currentSlide].description;
     const scrollDuration = getScrollDuration(currentDescription);
-    const pauseDuration = 2000; // 2 секунды паузы
+    const pauseDuration = 0; // 2 секунды паузы
 
     const timer = setTimeout(() => {
       if (sliderRef.current && !isPaused) {
@@ -176,29 +176,32 @@ const App = () => {
                   onMouseLeave={() => setIsPaused(false)}
                 >
                   <div className="flex size-full gap-8 text-white">
-                    <div className="relative flex w-56 shrink-0 items-start justify-center">
+                    <div className="flex flex-col justify-between">
                       <img
                         src={`/images/${commissioner.photo}`}
                         alt={`Фото ${commissioner.fio}`}
-                        className="absolute inset-0 size-full rounded-lg object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
                         }}
                       />
-                    </div>
-                    <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-3">
                       <div className="flex h-fit flex-col">
-                        <h1 className="m-0 text-4xl font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg">
-                          {commissioner.fio.split(' ').slice(-1)[0]}
+                        <h1 className="m-0 text-2xl font-bold uppercase leading-tight tracking-wide text-white drop-shadow-lg">
+                          {commissioner.fio.split(' ').slice(0, 1).join(' ')}
                         </h1>
                         <h1 className="m-0 text-2xl font-bold uppercase leading-tight tracking-wide text-white drop-shadow-lg">
-                          {commissioner.fio.split(' ').slice(0, -1).join(' ')}
+                          {commissioner.fio.split(' ').slice(1, -1).join(' ')}
                         </h1>
+                        <span className="m-0 text-3xl font-black uppercase leading-tight tracking-tight text-white drop-shadow-lg">
+                          {commissioner.fio.split(' ').slice(-1)[0]}
+                        </span>
+                        <span className="m-0 text-lg font-semibold text-white drop-shadow">
+                          {commissioner.birthdate}
+                        </span>
                       </div>
-                      <p className="m-0 text-lg font-semibold text-white drop-shadow">
-                        {commissioner.birthdate}
-                      </p>
+                    </div>
+                    <div className="flex flex-1 flex-col gap-2 overflow-y-auto pr-3">
+
                       <h2 className="m-0 text-xl font-bold uppercase tracking-wide text-white drop-shadow-lg">
                         {commissioner.position}
                       </h2>
@@ -231,28 +234,31 @@ const App = () => {
         <div className="relative h-[65%] overflow-hidden">
           <Marquee
             direction="up"
-            className="slow-marquee h-full !gap-1"
+            className="fast-marquee h-full !gap-1"
             innerClassName="!gap-1"
             fade
-            numberOfCopies={1}
+            numberOfCopies={2}
           >
             {commissionerPairs.map((pair, pairIndex) => (
               <div
                 key={pairIndex}
                 className="mb-[0.1rem] flex justify-center gap-1"
               >
-                {pair.length === 1 ? (
-                  <div className="mx-auto flex h-96 max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-5 shadow-lg backdrop-blur-sm">
-                    <div className="mb-3 flex h-96 shrink-0 items-start gap-4">
-                      <div className="w-15 overflow-hidden rounded-full border-2 border-blue-500">
+                {pair.map((commissioner, index) => (
+                  <div
+                    key={index}
+                    className="flex max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-4 shadow-lg backdrop-blur-sm"
+                  >
+                    <div className="mb-2 flex h-32 shrink-0 items-start gap-3">
+                      <div className="size-24 overflow-hidden rounded">
                         <img
-                          src={`/images/${pair[0].photo}`}
-                          alt={`Фото ${pair[0].fio}`}
+                          src={`/images/${commissioner.photo}`}
+                          alt={`Фото ${commissioner.fio}`}
                           className="size-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
-                            const names = pair[0].fio.split(' ');
+                            const names = commissioner.fio.split(' ');
                             const lastName = names[0];
                             const firstName = names[1] || '';
                             const middleName = names[2] || '';
@@ -270,102 +276,106 @@ const App = () => {
                           }}
                         />
                       </div>
-                      <div className="flex-1">
-                        <h4 className="m-0 w-10/12 text-base font-semibold text-white">
-                          <div className="absolute right-0 top-0 flex flex-col items-center gap-2">
-                            <div className="h-6 w-12 overflow-hidden">
-                              <img
-                                src={`/images/${pair[0].flag}`}
-                                alt={`Флаг ${pair[0].fio}`}
-                                className="size-full object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                }}
-                              />
-                            </div>
-                            <div className="size-8 overflow-hidden">
-                              <img
-                                src={`/images/${pair[0].gerb}`}
-                                alt={`Герб ${pair[0].fio}`}
-                                className="size-full object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                }}
-                              />
-                            </div>
+
+                      <div className="relative flex-1">
+                        <div className="absolute right-0 top-0 flex flex-col items-center gap-1">
+                          <div className="h-5 w-10 overflow-hidden">
+                            <img
+                              src={`/images/${commissioner.flag}`}
+                              alt={`Флаг ${commissioner.fio}`}
+                              className="size-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
                           </div>
-                          <div className="flex flex-col">
-                            <span className="font-black text-white">
-                              {pair[0].fio.split(' ')[0]}
-                            </span>
-                            <span className="text-[10px] text-gray-300">
-                              {pair[0].fio.split(' ').slice(1).join(' ')}
-                            </span>
+                          <div className="size-6 overflow-hidden">
+                            <img
+                              src={`/images/${commissioner.gerb}`}
+                              alt={`Герб ${commissioner.fio}`}
+                              className="size-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
                           </div>
-                        </h4>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <span className="text-lg font-black text-white">
+                            {commissioner.fio.split(' ')[0]}
+                          </span>
+                          <span className="text-sm text-gray-300">
+                            {commissioner.fio.split(' ').slice(1).join(' ')}
+                          </span>
+                        </div>
                         <p className="m-0 text-sm font-medium text-gray-300">
-                          {pair[0].rank}
+                          {commissioner.rank}
                         </p>
                         <p className="m-0 text-sm leading-none text-gray-200">
-                          {pair[0].position}
+                          {commissioner.position}
                         </p>
                         <p className="m-0 text-xs text-gray-400">
-                          {pair[0].birthdate}
+                          {commissioner.birthdate}
                         </p>
                       </div>
                     </div>
-                    <div className="flex min-h-0 flex-1 flex-col">
-                      <div className="shrink-0">
+
+                    <div className="flex min-h-0 flex-1 flex-col gap-1">
+                      <div className="mb-2 shrink-0">
                         <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                           Последняя должность:
                         </h5>
                         <p className="m-0 text-sm leading-none text-gray-200">
-                          {pair[0].last_position.title}
+                          {commissioner.last_position.title}
                         </p>
                         <p className="m-0 text-xs italic text-gray-400">
-                          {pair[0].last_position.date_1} -{' '}
-                          {pair[0].last_position.date_2}
+                          {commissioner.last_position.date_1} -{' '}
+                          {commissioner.last_position.date_2}
                         </p>
                       </div>
 
                       <div className="min-h-0 flex-1 overflow-hidden">
-                        <div className="flex h-full flex-col gap-2">
-                          {pair[0].medals && pair[0].medals.length > 0 && (
-                            <div className="flex-1">
-                              <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
-                                Награды:
-                              </h5>
-                              <div className="h-12 overflow-hidden">
-                                <Slider
-                                  key={`medals-${pairIndex}`}
-                                  {...verticalSliderSettings}
-                                >
-                                  {pair[0].medals.map((medal, medalIndex) => (
-                                    <div key={medalIndex}>
-                                      <p className="m-0 text-xs leading-none text-gray-200">
-                                        {medal}
-                                      </p>
-                                    </div>
-                                  ))}
-                                </Slider>
+                        <div className="flex h-full flex-col gap-1">
+                          {commissioner.medals &&
+                            commissioner.medals.length > 0 && (
+                              <div className="flex-1">
+                                <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
+                                  Награды:
+                                </h5>
+                                <div className="h-12 overflow-hidden">
+                                  <Slider
+                                    key={`medals-pair-${pairIndex}-${index}`}
+                                    {...verticalSliderSettings}
+                                  >
+                                    {commissioner.medals.map(
+                                      (medal, medalIndex) => (
+                                        <div key={medalIndex}>
+                                          <p className="m-0 text-xs leading-none text-gray-200">
+                                            {medal}
+                                          </p>
+                                        </div>
+                                      ),
+                                    )}
+                                  </Slider>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
 
-                          {pair[0].achievement &&
-                            pair[0].achievement.length > 0 && (
+                          {commissioner.achievement &&
+                            commissioner.achievement.length > 0 && (
                               <div className="flex-1">
                                 <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                                   Достижения:
                                 </h5>
                                 <div className="h-12 overflow-hidden">
                                   <Slider
-                                    key={`achievements-${pairIndex}`}
+                                    key={`achievements-pair-${pairIndex}-${index}`}
                                     {...verticalSliderSettings}
                                   >
-                                    {pair[0].achievement.map(
+                                    {commissioner.achievement.map(
                                       (achievement, achievementIndex) => (
                                         <div key={achievementIndex}>
                                           <p className="m-0 text-xs leading-none text-gray-200">
@@ -382,159 +392,7 @@ const App = () => {
                       </div>
                     </div>
                   </div>
-                ) : (
-                  pair.map((commissioner, index) => (
-                    <div
-                      key={index}
-                      className="flex max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-5 shadow-lg backdrop-blur-sm"
-                    >
-                      <div className="mb-2 flex h-40 shrink-0 items-start gap-2 overflow-hidden">
-                        <div className="h-full w-28 overflow-hidden rounded">
-                          <img
-                            src={`/images/${commissioner.photo}`}
-                            alt={`Фото ${commissioner.fio}`}
-                            className="size-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const names = commissioner.fio.split(' ');
-                              const lastName = names[0];
-                              const firstName = names[1] || '';
-                              const middleName = names[2] || '';
-                              target.parentElement!.innerHTML =
-                                '<div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-blue-700 text-xs font-bold text-white">' +
-                                '<div>' +
-                                lastName +
-                                '</div>' +
-                                '<div>' +
-                                firstName +
-                                ' ' +
-                                middleName +
-                                '</div>' +
-                                '</div>';
-                            }}
-                          />
-                        </div>
-
-                        <div className="relative flex-1">
-                          <div className="absolute right-0 top-0 flex flex-col items-center gap-2">
-                            <div className="h-6 w-12 overflow-hidden">
-                              <img
-                                src={`/images/${commissioner.flag}`}
-                                alt={`Флаг ${commissioner.fio}`}
-                                className="size-full object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                }}
-                              />
-                            </div>
-                            <div className="size-8 overflow-hidden">
-                              <img
-                                src={`/images/${commissioner.gerb}`}
-                                alt={`Герб ${commissioner.fio}`}
-                                className="size-full object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          <h4 className="m-0 w-10/12 text-base font-semibold text-white">
-                            <div className="flex flex-col">
-                              <span className="font-black text-white">
-                                {commissioner.fio.split(' ')[0]}
-                              </span>
-                              <span className="text-[10px] text-gray-300">
-                                {commissioner.fio.split(' ').slice(1).join(' ')}
-                              </span>
-                            </div>
-                          </h4>
-                          <p className="m-0 text-sm font-medium text-gray-300">
-                            {commissioner.rank}
-                          </p>
-                          <p className="m-0 text-sm leading-none text-gray-200">
-                            {commissioner.position}
-                          </p>
-                          <p className="m-0 text-xs text-gray-400">
-                            {commissioner.birthdate}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex min-h-0 flex-1 flex-col">
-                        <div className="mb-2 shrink-0">
-                          <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
-                            Последняя должность:
-                          </h5>
-                          <p className="m-0 text-sm leading-none text-gray-200">
-                            {commissioner.last_position.title}
-                          </p>
-                          <p className="m-0 text-xs italic text-gray-400">
-                            {commissioner.last_position.date_1} -{' '}
-                            {commissioner.last_position.date_2}
-                          </p>
-                        </div>
-
-                        <div className="min-h-0 flex-1 overflow-hidden">
-                          <div className="flex h-full flex-col gap-2">
-                            {commissioner.medals &&
-                              commissioner.medals.length > 0 && (
-                                <div className="flex-1">
-                                  <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
-                                    Награды:
-                                  </h5>
-                                  <div className="h-12 overflow-hidden">
-                                    <Slider
-                                      key={`medals-pair-${pairIndex}-${index}`}
-                                      {...verticalSliderSettings}
-                                    >
-                                      {commissioner.medals.map(
-                                        (medal, medalIndex) => (
-                                          <div key={medalIndex}>
-                                            <p className="m-0 text-xs leading-none text-gray-200">
-                                              {medal}
-                                            </p>
-                                          </div>
-                                        ),
-                                      )}
-                                    </Slider>
-                                  </div>
-                                </div>
-                              )}
-
-                            {commissioner.achievement &&
-                              commissioner.achievement.length > 0 && (
-                                <div className="flex-1">
-                                  <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
-                                    Достижения:
-                                  </h5>
-                                  <div className="h-12 overflow-hidden">
-                                    <Slider
-                                      key={`achievements-pair-${pairIndex}-${index}`}
-                                      {...verticalSliderSettings}
-                                    >
-                                      {commissioner.achievement.map(
-                                        (achievement, achievementIndex) => (
-                                          <div key={achievementIndex}>
-                                            <p className="m-0 text-xs leading-none text-gray-200">
-                                              {achievement}
-                                            </p>
-                                          </div>
-                                        ),
-                                      )}
-                                    </Slider>
-                                  </div>
-                                </div>
-                              )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
+                ))}
               </div>
             ))}
           </Marquee>
