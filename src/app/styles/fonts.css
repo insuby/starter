@@ -1,0 +1,44 @@
+/* Rubik Mono One */
+@font-face {
+  font-family: 'Rubik Mono One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Rubik_Mono_One/RubikMonoOne-Regular.ttf') format('truetype');
+}
+
+/* Oswald Light */
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/Oswald/static/Oswald-Light.ttf') format('truetype');
+}
+
+/* Oswald Regular */
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Oswald/static/Oswald-Regular.ttf') format('truetype');
+}
+
+/* Oswald Medium */
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/Oswald/static/Oswald-Medium.ttf') format('truetype');
+}
+
+/* Oswald Bold */
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Oswald/static/Oswald-Bold.ttf') format('truetype');
+}

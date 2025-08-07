@@ -27,7 +27,7 @@ type Commissioner = {
   flag: string;
 };
 
-const App: FC = () => {
+const App = () => {
   const commissioners = cvoData as unknown as Commissioner[];
   const sliderRef = useRef<Slider>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -79,16 +79,30 @@ const App: FC = () => {
 
   const featuredCommissioners = [
     {
-      fio: 'МИХАИЛ ВАСИЛЬЕВИЧ ФРУНЗЕ',
-      birthdate: '(1885-1925)',
+      fio: 'ВАЛЕНТИН АЛЕКСАНДРОВИЧ МАЛАХОВСКИЙ',
+      birthdate: '(1894-1971)',
       position: 'ВОЕННЫЙ КОМИССАР',
       region:
         'Латвийской СССР (1943-1946)\nКалининградской области (1946-1948)',
-      description: `Советский военачальник, революционер, военный теоретик. Один из наиболее талантливых полководцев Красной армии времён Гражданской войны. Народный комиссар по военным и морским делам СССР (1924-1925), председатель Реввоенсовета СССР, нарком по военным и морским делам СССР.
-В 1920 году Фрунзе был назначен командующим Туркестанским фронтом и военным комиссаром Туркестанской ССР. Под его руководством были проведены успешные операции по ликвидации басмачества в Средней Азии. Фрунзе проявил себя как талантливый организатор и стратег, сумевший в короткие сроки наладить работу военных комиссариатов в регионе.
-В период его руководства Туркестанским фронтом были созданы эффективные системы мобилизации и подготовки военных кадров. Фрунзе внес значительный вклад в развитие военной теории, разработав концепцию единой военной доктрины. Его труды по военному искусству стали классикой советской военной мысли.
-После смерти Фрунзе его именем были названы многие города, улицы, военные училища и корабли. В Москве, Бишкеке, Самаре и других городах установлены памятники этому выдающемуся военачальнику.`,
-      photo: 'main/фрунзе.png',
+      description: `
+        Генерал-майор, Первый военный комиссар Латвийской СССР в составе 2-го Прибалтийского фронта. Первый военный комиссар Калининградской области (1946- 1948). В короткие сроки создал военные комиссариаты в области и организовал их работу. За время службы был пять раз ранен и два раза контужен (одна контузия - в результате падения с подбитого аэроплана).
+        Участник Первой мировой войны, Георгиевский кавалер, ефрейтор в императорской армии, командир стрелкового полка, стрелковой и кавалерийской бригад, кавалерийской дивизии Красной Армии в Гражданскую войну, участник Великой Отечественной войны. Военный комиссар Керченского и Ново-Ушицкого уездов, райвоенкоматов Феодосии, Николаева, Житомира, Чернигова, офицер организационно-мобильных отделов Киевского особого и Прибалтийского военных округов, начальник отдела укомплектования 7 отдельной армии Ленинградского округа (фронта), военный комиссар Латвийской ССР и Калининградской области.
+        С началом Великой Отечественной войны, в короткие сроки сформировал и укомплектовал воинские части на направлении прорыва белофинов в районе Лайомола. Был назначен военным комендантом Петрозаводска. Организовал оборону города и лично руководил боем воинских частей гарнизона с противником, под обстрелом противника провел эвакуацию предприятий и населения.
+        Его имя носили пять совхозов и колхозов Воронежской области. Улицы и площади названы в честь Малаховского В.А. в городах Воронеже, Богучаре, Калаче, Острогожске, и др`,
+      photo: 'main/малаховский.png',
+    },
+    {
+      fio: 'Иван Васильевич Панфилов',
+      birthdate: '(1893-1941)',
+      position: 'ВОЕННЫЙ КОМИССАР',
+      region: 'Киргизской ССР (1938-1941)',
+      description: `Генерал-майор, Герой Советского Союза, военный комиссар Киргизской, участник Первой мировой войны, фельдфебель императорской армии, в Красной Армии командир взвода, роты в 25-й стрелковой (Чапаевской) дивизии, начальник пограничного поста, командир Памирского отряда, командир батальона, командир 9-го отдельного Туркестанского Краснознаменного горнострелкового полка.
+        С началом Великой Отечественной войны И.В.Панфилов приступил к формированию 316-й стрелковой дивизии. В эту дивизию набирались жители Киргизии и Казахстана. Сформированная дивизия была направлена под Москву и уже в начале октября держала полосу обороны протяженностью в 41 километр на волоколамском направлении.
+        10 октября 316-я дивизия вступила в неравный бой с противником и в результате продолжительных оборонительных боев смогла нанести ему значительный урон разгромив 2-ю танковую, 29-ю моторизованную, 11 и 110-ю пехотные дивизии, уничтожив 9000 вражеских солдат и офицеров, более 80 танков, многоорудий, минометов и другого оружия. 18 ноября в ходе минометного обстрела противника командир дивизии погиб.
+        316-й стрелковая дивизия (с ноября - Краснознамённая, гвардейская), 23 ноября получила почётное звание Панфиловской. Боевое знамя г вардейской 11анфиловской дивизии реяло в числе других на Параде Победы
+        в Москве в 1945 г.
+        12 апреля 1942 г. генерал-майор И.В.Панфилов был посмертно награжден орденом Ленина и ему было присвоено звание Героя Советского Союза - за умелое руководство частями дивизии в боях на подступах к городу Москве и проявленные при этом личную храбрость и героизм его имя было увековечено в разных частях Советского союза, памятники и улицы Панфилова появились в Москве, Алма-Ате, Бишкеке, Перми, Липецке, Волоколамске, и др.`,
+      photo: 'main/панфилов.png',
     },
     {
       fio: 'ГРИГОРИЙ КУЗЬМИЧ ЧЕРНЫХ',
@@ -96,23 +110,12 @@ const App: FC = () => {
       position: 'ВОЕННЫЙ КОМИССАР',
       region: 'города Москвы (1939-1958)',
       description: `Генерал-майор, участник Первой мировой войны и Гражданской войн, военный комиссар Московского военного комиссариата. Проходил военную службу на воинских должностях в Красной Армиии, в уездных военных комиссариатах Брянской губернии, военным комиссаром Витебского и Калининского областных военкоматов.
-В должности военного комиссара г. Москвы в годы Великой Отечественной войны обеспечил регулярное пополнение личным составом армейских подразделений, формирование резервных частей, комплектование военных училищ, провёл, мобилизацию трудящихся в дивизии народного ополчения. Было сформировано и отправлено на фронт 12 дивизий народного ополчения.
-Большая работа была проведена по организации всеобщей военной подготовки населения. Было подготовлено более 200 тысяч человек по воинским специальностям. Из них 11233 снайпера, 6332 связиста, 23000 станковых пулемётчиков, 15283 миномётчиков, 12906 истребителей военкоматами Москвы было мобилизовано более 713 тысяч военнообязанных, сформировано 235 войсковых частей, направлено в войска более 25 тысяч единиц автомобилей
-и другой техники.
-После окончания Великой Отечественной войны провел масштабную работу по приему увольняемых военнослужащих на воинский учет, их трудовым и бытовым устройством.
-Учрежден кубок имени генерал-майора Черных Г.К. которым награждается лучший военный комиссариат г. Москвы`,
+        В должности военного комиссара г. Москвы в годы Великой Отечественной войны обеспечил регулярное пополнение личным составом армейских подразделений, формирование резервных частей, комплектование военных училищ, провёл, мобилизацию трудящихся в дивизии народного ополчения. Было сформировано и отправлено на фронт 12 дивизий народного ополчения.
+        Большая работа была проведена по организации всеобщей военной подготовки населения. Было подготовлено более 200 тысяч человек по воинским специальностям. Из них 11233 снайпера, 6332 связиста, 23000 станковых пулемётчиков, 15283 миномётчиков, 12906 истребителей военкоматами Москвы было мобилизовано более 713 тысяч военнообязанных, сформировано 235 войсковых частей, направлено в войска более 25 тысяч единиц автомобилей
+        и другой техники.
+        После окончания Великой Отечественной войны провел масштабную работу по приему увольняемых военнослужащих на воинский учет, их трудовым и бытовым устройством.
+        Учрежден кубок имени генерал-майора Черных Г.К. которым награждается лучший военный комиссариат г. Москвы`,
       photo: 'main/черных.png',
-    },
-    {
-      fio: 'АЛЕКСЕЙ МИХАЙЛОВИЧ КУЗЬМИН',
-      birthdate: '(1891-1980)',
-      position: 'ВОЕННЫЙ КОМИССАР',
-      region: 'Московской области (1938-1945)',
-      description: `Советский военачальник, генерал-лейтенант, участник Первой мировой и Гражданской войн. Военный комиссар Московской области в годы Великой Отечественной войны. Внес значительный вклад в организацию обороны Москвы и подготовку военных кадров.
-В период Великой Отечественной войны Кузьмин руководил военными комиссариатами Московской области, обеспечивая мобилизацию населения и формирование воинских частей. Под его руководством были созданы эффективные системы подготовки резервов для фронта.
-Кузьмин проявил себя как талантливый организатор военного дела, сумевший в сложных условиях военного времени наладить работу военных комиссариатов области. Его деятельность способствовала успешному проведению мобилизационных мероприятий и подготовке кадров для Красной Армии.
-После войны продолжил службу в военных комиссариатах, внеся значительный вклад в развитие системы военного управления. Его опыт и знания были востребованы в послевоенный период восстановления страны.`,
-      photo: 'main/кузьмин.png',
     },
   ];
 
@@ -200,7 +203,7 @@ const App: FC = () => {
                       <h2 className="m-0 text-xl font-bold uppercase tracking-wide text-white drop-shadow-lg">
                         {commissioner.position}
                       </h2>
-                      <p className="m-0 text-base font-medium text-white opacity-90">
+                      <p className="m-0 text-base whitespace-pre-wrap font-medium text-white opacity-90">
                         {commissioner.region}
                       </p>
 
@@ -209,7 +212,7 @@ const App: FC = () => {
                           direction="up"
                           className="h-full"
                           fade
-                          numberOfCopies={3}
+                          numberOfCopies={1}
                         >
                           <div className="mb-2">
                             <p className="m-0 text-justify text-sm leading-tight text-white">
@@ -275,7 +278,7 @@ const App: FC = () => {
                               <img
                                 src={`/images/${pair[0].flag}`}
                                 alt={`Флаг ${pair[0].fio}`}
-                                className="size-full object-contain"
+                                className="size-full object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
@@ -286,7 +289,7 @@ const App: FC = () => {
                               <img
                                 src={`/images/${pair[0].gerb}`}
                                 alt={`Герб ${pair[0].fio}`}
-                                className="size-full object-contain"
+                                className="size-full object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
@@ -314,7 +317,6 @@ const App: FC = () => {
                         </p>
                       </div>
                     </div>
-
                     <div className="flex min-h-0 flex-1 flex-col">
                       <div className="shrink-0">
                         <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
@@ -331,13 +333,16 @@ const App: FC = () => {
 
                       <div className="min-h-0 flex-1 overflow-hidden">
                         <div className="flex h-full flex-col gap-2">
-                          {pair[0].medals?.length > 0 && (
+                          {pair[0].medals && pair[0].medals.length > 0 && (
                             <div className="flex-1">
                               <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                                 Награды:
                               </h5>
                               <div className="h-12 overflow-hidden">
-                                <Slider {...verticalSliderSettings}>
+                                <Slider
+                                  key={`medals-${pairIndex}`}
+                                  {...verticalSliderSettings}
+                                >
                                   {pair[0].medals.map((medal, medalIndex) => (
                                     <div key={medalIndex}>
                                       <p className="m-0 text-xs leading-none text-gray-200">
@@ -350,26 +355,30 @@ const App: FC = () => {
                             </div>
                           )}
 
-                          {pair[0].achievement?.length > 0 && (
-                            <div className="flex-1">
-                              <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
-                                Достижения:
-                              </h5>
-                              <div className="h-12 overflow-hidden">
-                                <Slider {...verticalSliderSettings}>
-                                  {pair[0].achievement.map(
-                                    (achievement, achievementIndex) => (
-                                      <div key={achievementIndex}>
-                                        <p className="m-0 text-xs leading-none text-gray-200">
-                                          {achievement}
-                                        </p>
-                                      </div>
-                                    ),
-                                  )}
-                                </Slider>
+                          {pair[0].achievement &&
+                            pair[0].achievement.length > 0 && (
+                              <div className="flex-1">
+                                <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
+                                  Достижения:
+                                </h5>
+                                <div className="h-12 overflow-hidden">
+                                  <Slider
+                                    key={`achievements-${pairIndex}`}
+                                    {...verticalSliderSettings}
+                                  >
+                                    {pair[0].achievement.map(
+                                      (achievement, achievementIndex) => (
+                                        <div key={achievementIndex}>
+                                          <p className="m-0 text-xs leading-none text-gray-200">
+                                            {achievement}
+                                          </p>
+                                        </div>
+                                      ),
+                                    )}
+                                  </Slider>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                         </div>
                       </div>
                     </div>
@@ -381,7 +390,7 @@ const App: FC = () => {
                       className="flex max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-5 shadow-lg backdrop-blur-sm"
                     >
                       <div className="mb-2 flex h-40 shrink-0 items-start gap-2 overflow-hidden">
-                        <div className="w-28 overflow-hidden rounded">
+                        <div className="w-28 min-h-64 overflow-hidden rounded">
                           <img
                             src={`/images/${commissioner.photo}`}
                             alt={`Фото ${commissioner.fio}`}
@@ -414,7 +423,7 @@ const App: FC = () => {
                               <img
                                 src={`/images/${commissioner.flag}`}
                                 alt={`Флаг ${commissioner.fio}`}
-                                className="size-full object-contain"
+                                className="size-full object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
@@ -425,7 +434,7 @@ const App: FC = () => {
                               <img
                                 src={`/images/${commissioner.gerb}`}
                                 alt={`Герб ${commissioner.fio}`}
-                                className="size-full object-contain"
+                                className="size-full object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
@@ -472,47 +481,55 @@ const App: FC = () => {
 
                         <div className="min-h-0 flex-1 overflow-hidden">
                           <div className="flex h-full flex-col gap-2">
-                            {commissioner.medals?.length > 0 && (
-                              <div className="flex-1">
-                                <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
-                                  Награды:
-                                </h5>
-                                <div className="h-12 overflow-hidden">
-                                  <Slider {...verticalSliderSettings}>
-                                    {commissioner.medals.map(
-                                      (medal, medalIndex) => (
-                                        <div key={medalIndex}>
-                                          <p className="m-0 text-xs leading-none text-gray-200">
-                                            {medal}
-                                          </p>
-                                        </div>
-                                      ),
-                                    )}
-                                  </Slider>
+                            {commissioner.medals &&
+                              commissioner.medals.length > 0 && (
+                                <div className="flex-1">
+                                  <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
+                                    Награды:
+                                  </h5>
+                                  <div className="h-12 overflow-hidden">
+                                    <Slider
+                                      key={`medals-pair-${pairIndex}-${index}`}
+                                      {...verticalSliderSettings}
+                                    >
+                                      {commissioner.medals.map(
+                                        (medal, medalIndex) => (
+                                          <div key={medalIndex}>
+                                            <p className="m-0 text-xs leading-none text-gray-200">
+                                              {medal}
+                                            </p>
+                                          </div>
+                                        ),
+                                      )}
+                                    </Slider>
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
 
-                            {commissioner.achievement?.length > 0 && (
-                              <div className="flex-1">
-                                <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
-                                  Достижения:
-                                </h5>
-                                <div className="h-12 overflow-hidden">
-                                  <Slider {...verticalSliderSettings}>
-                                    {commissioner.achievement.map(
-                                      (achievement, achievementIndex) => (
-                                        <div key={achievementIndex}>
-                                          <p className="m-0 text-xs leading-none text-gray-200">
-                                            {achievement}
-                                          </p>
-                                        </div>
-                                      ),
-                                    )}
-                                  </Slider>
+                            {commissioner.achievement &&
+                              commissioner.achievement.length > 0 && (
+                                <div className="flex-1">
+                                  <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
+                                    Достижения:
+                                  </h5>
+                                  <div className="h-12 overflow-hidden">
+                                    <Slider
+                                      key={`achievements-pair-${pairIndex}-${index}`}
+                                      {...verticalSliderSettings}
+                                    >
+                                      {commissioner.achievement.map(
+                                        (achievement, achievementIndex) => (
+                                          <div key={achievementIndex}>
+                                            <p className="m-0 text-xs leading-none text-gray-200">
+                                              {achievement}
+                                            </p>
+                                          </div>
+                                        ),
+                                      )}
+                                    </Slider>
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
                           </div>
                         </div>
                       </div>

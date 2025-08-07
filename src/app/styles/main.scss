@@ -1,12 +1,10 @@
-@import 'normalize.css';
-@import 'react-toastify/dist/ReactToastify.min.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @import 'tailwind-extensions';
 @import '@devnomic/marquee/dist/index.css';
+@import "fonts.css";
 
 :root {
   --yellow: #ffb443;
