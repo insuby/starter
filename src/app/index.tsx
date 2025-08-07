@@ -157,8 +157,8 @@ const App: FC = () => {
   }, [currentSlide, featuredCommissioners, isPaused]);
 
   return (
-    <div className="mx-auto flex h-screen w-[720px] flex-col overflow-hidden bg-[lightblue]">
-      <div className="flex size-full flex-col gap-[100px]">
+    <div className="mx-auto flex h-screen w-[720px] flex-col overflow-hidden bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900">
+      <div className="flex size-full flex-col gap-[20px]">
         <div className="flex h-[35%] items-center justify-center p-5">
           <div className="size-full overflow-hidden">
             <Slider
@@ -240,7 +240,7 @@ const App: FC = () => {
                 className="mb-[0.1rem] flex justify-center gap-1"
               >
                 {pair.length === 1 ? (
-                  <div className="mx-auto flex h-96 max-w-[340px] flex-1 flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-lg">
+                  <div className="mx-auto flex h-96 max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-5 shadow-lg backdrop-blur-sm">
                     <div className="mb-3 flex h-96 shrink-0 items-start gap-4">
                       <div className="w-15 overflow-hidden rounded-full border-2 border-blue-500">
                         <img
@@ -269,7 +269,7 @@ const App: FC = () => {
                         />
                       </div>
                       <div className="flex-1">
-                        <h4 className="m-0 w-10/12 text-base font-semibold text-gray-800">
+                        <h4 className="m-0 w-10/12 text-base font-semibold text-white">
                           <div className="absolute right-0 top-0 flex flex-col items-center gap-2">
                             <div className="h-6 w-12 overflow-hidden">
                               <img
@@ -295,18 +295,18 @@ const App: FC = () => {
                             </div>
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-black">
+                            <span className="font-black text-white">
                               {pair[0].fio.split(' ')[0]}
                             </span>
-                            <span className="text-[10px]">
+                            <span className="text-[10px] text-gray-300">
                               {pair[0].fio.split(' ').slice(1).join(' ')}
                             </span>
                           </div>
                         </h4>
-                        <p className="m-0 text-sm font-medium text-gray-500">
+                        <p className="m-0 text-sm font-medium text-gray-300">
                           {pair[0].rank}
                         </p>
-                        <p className="m-0 text-sm leading-none text-gray-700">
+                        <p className="m-0 text-sm leading-none text-gray-200">
                           {pair[0].position}
                         </p>
                         <p className="m-0 text-xs text-gray-400">
@@ -317,13 +317,13 @@ const App: FC = () => {
 
                     <div className="flex min-h-0 flex-1 flex-col">
                       <div className="shrink-0">
-                        <h5 className="m-0 mb-1 border-b-2 border-blue-500 pb-1 text-sm font-semibold text-gray-800">
+                        <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                           Последняя должность:
                         </h5>
-                        <p className="m-0 text-sm leading-none text-gray-700">
+                        <p className="m-0 text-sm leading-none text-gray-200">
                           {pair[0].last_position.title}
                         </p>
-                        <p className="m-0 text-xs italic text-gray-500">
+                        <p className="m-0 text-xs italic text-gray-400">
                           {pair[0].last_position.date_1} -{' '}
                           {pair[0].last_position.date_2}
                         </p>
@@ -333,14 +333,14 @@ const App: FC = () => {
                         <div className="flex h-full flex-col gap-2">
                           {pair[0].medals?.length > 0 && (
                             <div className="flex-1">
-                              <h5 className="m-0 mb-1 border-b-2 border-blue-500 pb-1 text-sm font-semibold text-gray-800">
+                              <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                                 Награды:
                               </h5>
                               <div className="h-12 overflow-hidden">
                                 <Slider {...verticalSliderSettings}>
                                   {pair[0].medals.map((medal, medalIndex) => (
                                     <div key={medalIndex}>
-                                      <p className="m-0 text-xs leading-none text-gray-700">
+                                      <p className="m-0 text-xs leading-none text-gray-200">
                                         {medal}
                                       </p>
                                     </div>
@@ -352,7 +352,7 @@ const App: FC = () => {
 
                           {pair[0].achievement?.length > 0 && (
                             <div className="flex-1">
-                              <h5 className="m-0 mb-1 border-b-2 border-blue-500 pb-1 text-sm font-semibold text-gray-800">
+                              <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                                 Достижения:
                               </h5>
                               <div className="h-12 overflow-hidden">
@@ -360,7 +360,7 @@ const App: FC = () => {
                                   {pair[0].achievement.map(
                                     (achievement, achievementIndex) => (
                                       <div key={achievementIndex}>
-                                        <p className="m-0 text-xs leading-none text-gray-700">
+                                        <p className="m-0 text-xs leading-none text-gray-200">
                                           {achievement}
                                         </p>
                                       </div>
@@ -378,7 +378,7 @@ const App: FC = () => {
                   pair.map((commissioner, index) => (
                     <div
                       key={index}
-                      className="flex max-w-[340px] flex-1 flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-lg"
+                      className="flex max-w-[340px] flex-1 flex-col rounded-xl border border-blue-300/30 bg-white/10 p-5 shadow-lg backdrop-blur-sm"
                     >
                       <div className="mb-2 flex h-40 shrink-0 items-start gap-2 overflow-hidden">
                         <div className="w-28 overflow-hidden rounded">
@@ -434,20 +434,20 @@ const App: FC = () => {
                             </div>
                           </div>
 
-                          <h4 className="m-0 w-10/12 text-base font-semibold text-gray-800">
+                          <h4 className="m-0 w-10/12 text-base font-semibold text-white">
                             <div className="flex flex-col">
-                              <span className="font-black">
+                              <span className="font-black text-white">
                                 {commissioner.fio.split(' ')[0]}
                               </span>
-                              <span className="text-[10px]">
+                              <span className="text-[10px] text-gray-300">
                                 {commissioner.fio.split(' ').slice(1).join(' ')}
                               </span>
                             </div>
                           </h4>
-                          <p className="m-0 text-sm font-medium text-gray-500">
+                          <p className="m-0 text-sm font-medium text-gray-300">
                             {commissioner.rank}
                           </p>
-                          <p className="m-0 text-sm leading-none text-gray-700">
+                          <p className="m-0 text-sm leading-none text-gray-200">
                             {commissioner.position}
                           </p>
                           <p className="m-0 text-xs text-gray-400">
@@ -458,13 +458,13 @@ const App: FC = () => {
 
                       <div className="flex min-h-0 flex-1 flex-col">
                         <div className="mb-2 shrink-0">
-                          <h5 className="m-0 mb-1 border-b-2 border-blue-500 pb-1 text-sm font-semibold text-gray-800">
+                          <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                             Последняя должность:
                           </h5>
-                          <p className="m-0 text-sm leading-none text-gray-700">
+                          <p className="m-0 text-sm leading-none text-gray-200">
                             {commissioner.last_position.title}
                           </p>
-                          <p className="m-0 text-xs italic text-gray-500">
+                          <p className="m-0 text-xs italic text-gray-400">
                             {commissioner.last_position.date_1} -{' '}
                             {commissioner.last_position.date_2}
                           </p>
@@ -474,7 +474,7 @@ const App: FC = () => {
                           <div className="flex h-full flex-col gap-2">
                             {commissioner.medals?.length > 0 && (
                               <div className="flex-1">
-                                <h5 className="m-0 mb-1 border-b-2 border-blue-500 pb-1 text-sm font-semibold text-gray-800">
+                                <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                                   Награды:
                                 </h5>
                                 <div className="h-12 overflow-hidden">
@@ -482,7 +482,7 @@ const App: FC = () => {
                                     {commissioner.medals.map(
                                       (medal, medalIndex) => (
                                         <div key={medalIndex}>
-                                          <p className="m-0 text-xs leading-none text-gray-700">
+                                          <p className="m-0 text-xs leading-none text-gray-200">
                                             {medal}
                                           </p>
                                         </div>
@@ -495,7 +495,7 @@ const App: FC = () => {
 
                             {commissioner.achievement?.length > 0 && (
                               <div className="flex-1">
-                                <h5 className="m-0 mb-1 border-b-2 border-blue-500 pb-1 text-sm font-semibold text-gray-800">
+                                <h5 className="m-0 mb-1 border-b-2 border-blue-400/50 pb-1 text-sm font-semibold text-white">
                                   Достижения:
                                 </h5>
                                 <div className="h-12 overflow-hidden">
@@ -503,7 +503,7 @@ const App: FC = () => {
                                     {commissioner.achievement.map(
                                       (achievement, achievementIndex) => (
                                         <div key={achievementIndex}>
-                                          <p className="m-0 text-xs leading-none text-gray-700">
+                                          <p className="m-0 text-xs leading-none text-gray-200">
                                             {achievement}
                                           </p>
                                         </div>
