@@ -7,7 +7,7 @@
     "strictFunctionTypes": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "removeComments": true,
     "allowJs": true,
     "noEmit": true,

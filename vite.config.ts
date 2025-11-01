@@ -4,6 +4,7 @@ import * as process from 'node:process';
 import { defineConfig, loadEnv } from 'vite';
 
 import react from '@vitejs/plugin-react';
+import ReactCompiler from 'babel-plugin-react-compiler';
 
 const pathResolve = (path: string) => nodePath.resolve(__dirname, path);
 
@@ -28,13 +29,8 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: {
             react: ['react', 'react-dom'],
-            ui: ['antd', '@headlessui/react', 'react-toastify'],
-            icons: [
-              '@fortawesome/fontawesome-svg-core',
-              '@fortawesome/free-solid-svg-icons',
-              '@fortawesome/react-fontawesome',
-            ],
-            forms: ['react-hook-form', '@hookform/resolvers', 'yup'],
+            ui: ['react-toastify'],
+            vendor: ['yup', '@tanstack/react-query', 'axios', 'zustand'],
           },
         },
         plugins: [
@@ -47,7 +43,13 @@ export default defineConfig(({ mode }) => {
         ],
       },
     },
-    plugins: [react()],
+    plugins: [
+      react({
+        babel: {
+          plugins: [ReactCompiler],
+        },
+      }),
+    ],
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.scss'],
       alias: {
