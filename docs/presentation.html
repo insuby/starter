@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Портал военкоматов — Учёт БСО</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:       #1e2433;
+    --surface:  #252c3f;
+    --surface2: #2d3650;
+    --border:   #3d4866;
+    --accent:   #2d7cf0;
+    --accent2:  #6ba3f8;
+    --text:     #eef0f6;
+    --text2:    #9aaac8;
+    --green:    #3fba5c;
+    --yellow:   #e8bc4a;
+    --red:      #f07070;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* ── NAV ─────────────────────────────── */
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 52px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; z-index: 100;
+  }
+  #nav-title { font-size: 14px; font-weight: 600; color: var(--text2); letter-spacing: .04em; }
+  #nav-controls { display: flex; align-items: center; gap: 14px; }
+  #slide-counter { font-size: 13px; color: var(--text2); min-width: 60px; text-align: center; }
+  .nav-btn {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .nav-btn:hover { background: var(--accent); border-color: var(--accent2); }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+
+  #progress-bar {
+    position: fixed; top: 51px; left: 0; height: 3px;
+    background: var(--accent); transition: width .3s ease; z-index: 100;
+  }
+
+  /* ── DOTS ────────────────────────────── */
+  #dots {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 7px; z-index: 100;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--border); cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .dot.active { background: var(--accent2); transform: scale(1.4); }
+
+  #kb-hint { position: fixed; bottom: 22px; right: 28px; font-size: 12px; color: var(--border); z-index: 100; }
+
+  /* ── SLIDES ──────────────────────────── */
+  #slides { position: fixed; top: 52px; left: 0; right: 0; bottom: 0; overflow: hidden; }
+  .slide {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; opacity: 0; pointer-events: none;
+    transition: opacity .35s ease, transform .35s ease;
+    transform: translateX(40px);
+  }
+  .slide.active  { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .slide.prev    { opacity: 0; transform: translateX(-40px); }
+
+  /* ── TITLE SLIDE ─────────────────────── */
+  .s-title {
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 80px; text-align: center;
+  }
+  .s-title .badge {
+    display: inline-block;
+    background: rgba(45,124,240,.18); border: 1px solid rgba(107,163,248,.35);
+    color: var(--accent2); padding: 5px 16px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; margin-bottom: 28px;
+  }
+  .s-title h1 { font-size: 58px; font-weight: 700; line-height: 1.12; margin-bottom: 18px; letter-spacing: -.02em; }
+  .s-title h1 em { color: var(--accent2); font-style: normal; }
+  .s-title .sub { font-size: 20px; color: var(--text2); margin-bottom: 52px; max-width: 660px; line-height: 1.5; }
+  .meta-row { display: flex; gap: 48px; }
+  .meta-item { text-align: center; }
+  .meta-item .val { font-size: 32px; font-weight: 700; display: block; }
+  .meta-item .lbl { font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; }
+  .dv { width: 1px; background: var(--border); }
+  .s-title .foot { position: absolute; bottom: 52px; left: 0; right: 0; text-align: center; font-size: 12px; color: var(--border); }
+
+  /* ── О СИСТЕМЕ ───────────────────────── */
+  .s-about {
+    flex-direction: column; padding: 36px 56px; overflow-y: auto;
+    gap: 0;
+  }
+  .s-about > h2 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+  .s-about > p  { font-size: 15px; color: var(--text2); margin-bottom: 32px; }
+
+  /* Flow diagram */
+  .flow-diagram {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; margin-bottom: 36px;
+  }
+  .flow-box {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; text-align: center; min-width: 120px;
+  }
+  .flow-box.accent { background: rgba(45,124,240,.18); border-color: rgba(107,163,248,.5); }
+  .flow-box .fb-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+  .flow-box .fb-name { font-size: 14px; font-weight: 600; line-height: 1.3; }
+  .flow-box .fb-sub  { font-size: 11px; color: var(--text2); margin-top: 3px; }
+  .flow-arrow-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 12px; gap: 4px;
+  }
+  .flow-arrow-line { width: 56px; height: 2px; background: var(--border); position: relative; }
+  .flow-arrow-line::after {
+    content: ''; position: absolute; right: -1px; top: -4px;
+    border-left: 8px solid var(--border); border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .flow-arrow-label { font-size: 11px; color: var(--text2); white-space: nowrap; }
+
+  /* Hierarchy row */
+  .hier-row {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 24px; margin-bottom: 28px; gap: 0;
+  }
+  .hier-row .hn {
+    padding: 6px 14px; background: var(--surface2); border-radius: 6px;
+    font-size: 14px; font-weight: 600; white-space: nowrap;
+  }
+  .hier-row .hn.active { background: rgba(45,124,240,.22); color: var(--accent2); border: 1px solid rgba(107,163,248,.4); }
+  .hier-arr { padding: 0 10px; color: var(--text2); font-size: 16px; }
+
+  /* Value props */
+  .value-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .vc {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 14px;
+  }
+  .vc .vc-icon { font-size: 22px; margin-bottom: 8px; display: block; }
+  .vc h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .vc p  { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* ── SCREEN SLIDE ────────────────────── */
+  .s-screen { flex-direction: column; }
+
+  .scr-header {
+    padding: 18px 40px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface); flex-shrink: 0;
+  }
+  .scr-header .role-pill {
+    display: inline-block;
+    background: rgba(45,124,240,.15); border: 1px solid rgba(107,163,248,.3);
+    color: var(--accent2); padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .scr-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .scr-header p  { font-size: 14px; color: var(--text2); line-height: 1.5; }
+
+  .scr-body { flex: 1; display: flex; overflow: hidden; }
+
+  .scr-img {
+    flex: 1; overflow: hidden; position: relative;
+    border-right: 1px solid var(--border);
+  }
+  .scr-img img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top center;
+    cursor: zoom-in; transition: object-fit .2s;
+  }
+  .scr-img img.zoomed { object-fit: contain; object-position: center; cursor: zoom-out; }
+  .scr-img .ph {
+    width: 100%; height: 100%;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--surface2); color: var(--text2); gap: 12px; font-size: 14px;
+  }
+
+  .scr-notes {
+    width: 300px; flex-shrink: 0;
+    padding: 24px 20px; overflow-y: auto;
+    background: var(--surface);
+  }
+  .scr-notes h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text2); margin-bottom: 16px;
+  }
+  .fi {
+    display: flex; gap: 12px;
+    margin-bottom: 16px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .fi:last-child { border-bottom: none; margin-bottom: 0; }
+  .fd {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent2); margin-top: 6px; flex-shrink: 0;
+  }
+  .fd.g { background: var(--green); }
+  .fd.y { background: var(--yellow); }
+  .ft { font-size: 14px; line-height: 1.6; color: var(--text2); }
+  .ft strong { color: var(--text); display: block; margin-bottom: 2px; font-size: 14px; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 12px;
+    font-size: 11px; font-weight: 500; margin-right: 4px; margin-top: 3px;
+  }
+  .tb  { background: rgba(45,124,240,.2);  color: var(--accent2); }
+  .tg  { background: rgba(63,186,92,.2);   color: var(--green); }
+  .ty  { background: rgba(232,188,74,.2);  color: var(--yellow); }
+  .tgr { background: rgba(157,170,200,.12); color: var(--text2); }
+
+  /* ── TECH SLIDE ──────────────────────── */
+  .s-tech { flex-direction: column; padding: 36px 56px; overflow-y: auto; }
+  .s-tech > h2 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .s-tech > p  { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+  .tech-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .tc h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); margin-bottom: 12px; margin-top: 20px; }
+  .tc h3:first-child { margin-top: 0; }
+  .ti {
+    display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 8px;
+  }
+  .ti-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); flex-shrink: 0; margin-top: 5px; }
+  .ti-name { font-size: 14px; font-weight: 600; }
+  .ti-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  /* ── SUMMARY SLIDE ───────────────────── */
+  .s-sum { flex-direction: column; padding: 36px 56px; }
+  .s-sum > h2 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .s-sum > p  { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+  .sum-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .sc-col h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); margin-bottom: 14px; }
+  .si { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .si-icon {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  }
+  .si-icon.done { background: rgba(63,186,92,.2);  color: var(--green); }
+  .si-icon.todo { background: rgba(45,124,240,.2); color: var(--accent2); }
+  .si-text { font-size: 14px; color: var(--text2); line-height: 1.55; }
+  .si-text strong { color: var(--text); display: block; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <span id="nav-title">Портал военкоматов · Учёт бланков строгой отчётности</span>
+  <div id="nav-controls">
+    <button class="nav-btn" id="btn-prev" onclick="changeSlide(-1)">&#8592;</button>
+    <span id="slide-counter">1 / 12</span>
+    <button class="nav-btn" id="btn-next" onclick="changeSlide(1)">&#8594;</button>
+  </div>
+</div>
+<div id="progress-bar"></div>
+<div id="dots"></div>
+<div id="kb-hint">← → навигация · клик на скрин = приближение</div>
+
+<div id="slides">
+
+  <!-- ─── 1. ТИТУЛ ──────────────────────── -->
+  <div class="slide s-title active" data-index="0">
+    <div class="badge">Прототип интерфейса · 2026</div>
+    <h1>Портал <em>военкоматов</em><br>Учёт БСО</h1>
+    <p class="sub">Система учёта бланков строгой отчётности — от поступления из типографии до выдачи гражданину с подписью комиссара</p>
+    <div class="meta-row">
+      <div class="meta-item"><span class="val">11</span><span class="lbl">разделов</span></div>
+      <div class="dv"></div>
+      <div class="meta-item"><span class="val">6</span><span class="lbl">ролей</span></div>
+      <div class="dv"></div>
+      <div class="meta-item"><span class="val">5</span><span class="lbl">уровней иерархии</span></div>
+      <div class="dv"></div>
+      <div class="meta-item"><span class="val">3</span><span class="lbl">типа бланков</span></div>
+    </div>
+    <div class="foot">25 мая 2026 · Разработан по макетам дизайна</div>
+  </div>
+
+  <!-- ─── 2. О СИСТЕМЕ ─────────────────── -->
+  <div class="slide s-about" data-index="1">
+    <h2>Что такое Портал военкоматов</h2>
+    <p>Единая система для отслеживания каждого бланка от момента поступления до передачи гражданину</p>
+
+    <!-- Поток движения бланков -->
+    <div class="flow-diagram">
+      <div class="flow-box">
+        <span class="fb-icon">🖨</span>
+        <span class="fb-name">Типография</span>
+        <span class="fb-sub">Печатает бланки</span>
+      </div>
+      <div class="flow-arrow-wrap">
+        <div class="flow-arrow-line"></div>
+        <span class="flow-arrow-label">поступление</span>
+      </div>
+      <div class="flow-box accent">
+        <span class="fb-icon">🏛</span>
+        <span class="fb-name">ГОМУ<br>(Центр)</span>
+        <span class="fb-sub">Принимает и учитывает</span>
+      </div>
+      <div class="flow-arrow-wrap">
+        <div class="flow-arrow-line"></div>
+        <span class="flow-arrow-label">распределение</span>
+      </div>
+      <div class="flow-box accent">
+        <span class="fb-icon">📍</span>
+        <span class="fb-name">Округа и<br>военкоматы</span>
+        <span class="fb-sub">Получают и хранят</span>
+      </div>
+      <div class="flow-arrow-wrap">
+        <div class="flow-arrow-line"></div>
+        <span class="flow-arrow-label">выдача</span>
+      </div>
+      <div class="flow-box">
+        <span class="fb-icon">👤</span>
+        <span class="fb-name">Гражданин</span>
+        <span class="fb-sub">Получает бланк</span>
+      </div>
+    </div>
+
+    <!-- Иерархия -->
+    <div class="hier-row">
+      <span class="hn active">ГОМУ (Центр)</span>
+      <span class="hier-arr">→</span>
+      <span class="hn">Военный округ</span>
+      <span class="hier-arr">→</span>
+      <span class="hn">ОМУ</span>
+      <span class="hier-arr">→</span>
+      <span class="hn">ВК субъекта</span>
+      <span class="hier-arr">→</span>
+      <span class="hn">ВК МО</span>
+      <span class="hier-arr">→</span>
+      <span class="hn active">Гражданин</span>
+    </div>
+
+    <!-- Что умеет -->
+    <div class="value-grid">
+      <div class="vc">
+        <span class="vc-icon">📥</span>
+        <h4>Поступление</h4>
+        <p>Регистрация серий бланков от типографии</p>
+      </div>
+      <div class="vc">
+        <span class="vc-icon">📊</span>
+        <h4>Распределение</h4>
+        <p>Каскадная передача квот по всей вертикали</p>
+      </div>
+      <div class="vc">
+        <span class="vc-icon">📋</span>
+        <h4>Учёт и реестр</h4>
+        <p>Каждый бланк отслеживается с историей операций</p>
+      </div>
+      <div class="vc">
+        <span class="vc-icon">✍</span>
+        <h4>Контроль ЭЦП</h4>
+        <p>Выдача и замена подписываются комиссаром</p>
+      </div>
+      <div class="vc">
+        <span class="vc-icon">📈</span>
+        <h4>Отчётность</h4>
+        <p>Сводки и выгрузки на любом уровне иерархии</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 3. ДАШБОРД ───────────────────── -->
+  <div class="slide s-screen" data-index="2">
+    <div class="scr-header">
+      <div class="role-pill">Оператор центра</div>
+      <h2>Главный экран — общая картина</h2>
+      <p>Сводные показатели по всем бланкам в системе и динамика операций за последние 7 дней</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-16.png" alt="Дашборд"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">📊</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Что видит оператор центра</h3>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Счётчики бланков</strong>В обороте · Выдано · На удержании · Списано</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>График за 7 дней</strong>Три линии: выдача, возврат, списание</div>
+        </div>
+        <div class="fi">
+          <div class="fd g"></div>
+          <div class="ft"><strong>Только для центра</strong>Остальные роли видят только свой участок</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 4. РЕЕСТР БЛАНКОВ ─────────────── -->
+  <div class="slide s-screen" data-index="3">
+    <div class="scr-header">
+      <div class="role-pill">Оператор ВК МО</div>
+      <h2>Реестр бланков</h2>
+      <p>Список всех бланков с поиском, фильтрами и переключением между активными и архивными</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-01.png" alt="Реестр бланков"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">📋</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Возможности</h3>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Поиск по номеру</strong>Формат АА123456 — серия и номер бланка</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Фильтры</strong>По статусу, типу бланка и месту нахождения</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Вкладки</strong>Активные бланки и Архив (списанные)</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft">Типы бланков:<br>
+            <span class="tag tb">Военный билет</span>
+            <span class="tag tg">Справка</span>
+            <span class="tag ty">Удостоверение</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 5. ОПЕРАЦИИ ──────────────────── -->
+  <div class="slide s-screen" data-index="4">
+    <div class="scr-header">
+      <div class="role-pill">Оператор ВК МО</div>
+      <h2>Операции с бланками</h2>
+      <p>Выбор нужного типа операции — и система открывает пошаговую форму с нужными полями</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-03.png" alt="Операции"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">⚙</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Доступные операции</h3>
+        <div class="fi">
+          <div class="fd g"></div>
+          <div class="ft"><strong>Выдача гражданину</strong>4 шага: тип → причина → поиск гражданина → подтверждение</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Сдача на хранение</strong>Принять бланк на временное хранение</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Возврат / Замена / Списание</strong>Все остальные сценарии движения бланка</div>
+        </div>
+        <div class="fi">
+          <div class="fd y"></div>
+          <div class="ft"><strong>После создания</strong>Операция идёт на подпись комиссару</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 6. НА ПОДПИСАНИИ ─────────────── -->
+  <div class="slide s-screen" data-index="5">
+    <div class="scr-header">
+      <div class="role-pill">Военный комиссар</div>
+      <h2>Очередь на подписание</h2>
+      <p>Заявки от операторов, ожидающие электронной подписи комиссара. Видна история и детали каждой операции</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-07.png" alt="На подписании"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">✍</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Как это работает</h3>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Список заявок</strong>Дата, тип операции, номер бланка, ФИО гражданина</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Детали</strong>Откуда и куда передаётся бланк, причина, комментарий оператора</div>
+        </div>
+        <div class="fi">
+          <div class="fd g"></div>
+          <div class="ft"><strong>Подпись</strong>Комиссар подписывает — статус операции обновляется</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft">Счётчик непрочитанных — в шапке сайта</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 7. ПОСТУПЛЕНИЕ ───────────────── -->
+  <div class="slide s-screen" data-index="6">
+    <div class="scr-header">
+      <div class="role-pill">Оператор центра</div>
+      <h2>Поступление бланков от типографии</h2>
+      <p>Пошаговая форма регистрации новой партии бланков с проверкой серии и разбивкой по типам</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-20.png" alt="Поступление"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">📥</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Шаги оформления</h3>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Шаг 1 из 4</strong>Диапазон номеров: с АА000000 по АА999999</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Шаг 2</strong>Система автоматически проверяет серию и размер партии</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Шаг 3</strong>Разбивка на военные билеты, справки, удостоверения</div>
+        </div>
+        <div class="fi">
+          <div class="fd g"></div>
+          <div class="ft"><strong>Шаг 4</strong>Подтверждение — бланки поступают в оборот</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 8. РАСПРЕДЕЛЕНИЕ ─────────────── -->
+  <div class="slide s-screen" data-index="7">
+    <div class="scr-header">
+      <div class="role-pill">Оператор военного округа</div>
+      <h2>Распределение бланков по подразделениям</h2>
+      <p>Каждый уровень видит квоту от вышестоящего и задаёт объёмы для нижестоящих организаций</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-29.png" alt="Распределение"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">🏛</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Как работает</h3>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Квота сверху</strong>Показывает сколько бланков поступило от вышестоящего</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Ввод для каждого ОМУ</strong>Военный билет / Справка / Удостоверение — три колонки</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Вся вертикаль</strong>Центр → Округ → ОМУ → ВК субъекта → ВК МО</div>
+        </div>
+        <div class="fi">
+          <div class="fd g"></div>
+          <div class="ft">Каждый видит только свой участок цепочки</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 9. ПЕРЕМЕЩЕНИЯ ───────────────── -->
+  <div class="slide s-screen" data-index="8">
+    <div class="scr-header">
+      <div class="role-pill">Оператор ВК субъекта</div>
+      <h2>Перемещения между военкоматами</h2>
+      <p>Передача диапазона бланков нижестоящему военкомату. История последних перемещений всегда перед глазами</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-38.png" alt="Перемещения"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">↔</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Что есть на экране</h3>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Новое перемещение</strong>Выбор получателя, диапазон «Номер от — до»</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Счётчик</strong>Доступно для передачи: 3 бланка</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>История</strong>АА123400–АА123450: 50 бланков · 18.01<br>АА123300–АА123349: 50 бланков · 05.03</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 10. ОТЧЁТЫ ───────────────────── -->
+  <div class="slide s-screen" data-index="9">
+    <div class="scr-header">
+      <div class="role-pill">Все операторы</div>
+      <h2>Формирование отчётов</h2>
+      <p>Выбор типа отчёта, периода и уровня иерархии — и выгрузка данных в нужном разрезе</p>
+    </div>
+    <div class="scr-body">
+      <div class="scr-img">
+        <img src="screenshots/Screenshot%20from%202026-05-25%2015-49-11.png" alt="Отчёты"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="ph"><span style="font-size:40px;opacity:.2">📈</span><span>скриншот не найден</span></div>
+      </div>
+      <div class="scr-notes">
+        <h3>Параметры отчёта</h3>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Тип отчёта</strong>Движение, выданные, остатки, история, статистика</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Период</strong>Дата начала и окончания</div>
+        </div>
+        <div class="fi">
+          <div class="fd"></div>
+          <div class="ft"><strong>Уровень</strong>Центр / Округа / Субъекты / ВК МО</div>
+        </div>
+        <div class="fi">
+          <div class="fd y"></div>
+          <div class="ft">Кнопки «Сформировать» и «Экспорт в Excel» — в плане на следующий этап</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 11. СТЕК ─────────────────────── -->
+  <div class="slide s-tech" data-index="10">
+    <h2>Из чего построена система</h2>
+    <p>Современный и надёжный набор технологий. Все данные сейчас на демо-режиме — без подключения к серверу.</p>
+    <div class="tech-cols">
+      <div class="tc">
+        <h3>Интерфейс</h3>
+        <div class="ti"><div class="ti-dot"></div><div><div class="ti-name">React 18 + TypeScript</div><div class="ti-desc">Компонентная архитектура, строгая типизация</div></div></div>
+        <div class="ti"><div class="ti-dot"></div><div><div class="ti-name">Vite 6</div><div class="ti-desc">Быстрая сборка и запуск</div></div></div>
+        <div class="ti"><div class="ti-dot"></div><div><div class="ti-name">Tailwind CSS + shadcn/ui</div><div class="ti-desc">Стили и готовые компоненты</div></div></div>
+        <div class="ti"><div class="ti-dot"></div><div><div class="ti-name">Recharts</div><div class="ti-desc">Графики и визуализация данных</div></div></div>
+      </div>
+      <div class="tc">
+        <h3>Сейчас — демо-режим</h3>
+        <div class="ti"><div class="ti-dot" style="background:var(--yellow)"></div><div><div class="ti-name">Данные встроены в интерфейс</div><div class="ti-desc">Нет подключения к серверу и базе данных</div></div></div>
+        <div class="ti"><div class="ti-dot" style="background:var(--yellow)"></div><div><div class="ti-name">Схема API готова</div><div class="ti-desc">Контракт для будущего сервера описан и согласован</div></div></div>
+        <h3>Следующий этап</h3>
+        <div class="ti"><div class="ti-dot" style="background:var(--green)"></div><div><div class="ti-name">Сервер и база данных</div><div class="ti-desc">Реальные данные, хранение и безопасность</div></div></div>
+        <div class="ti"><div class="ti-dot" style="background:var(--green)"></div><div><div class="ti-name">Вход и авторизация</div><div class="ti-desc">Единый вход, права по должности</div></div></div>
+        <div class="ti"><div class="ti-dot" style="background:var(--green)"></div><div><div class="ti-name">Реальная электронная подпись</div><div class="ti-desc">Юридически значимое подписание документов</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 12. ИТОГИ ────────────────────── -->
+  <div class="slide s-sum" data-index="11">
+    <h2>Что сделано и что впереди</h2>
+    <p>Интерфейс готов и демонстрирует все ключевые сценарии работы системы.</p>
+    <div class="sum-cols">
+      <div class="sc-col">
+        <h3>Сделано</h3>
+        <div class="si"><div class="si-icon done">✓</div><div class="si-text"><strong>Все 11 разделов системы</strong>Навигация, переключение ролей, адаптивное меню</div></div>
+        <div class="si"><div class="si-icon done">✓</div><div class="si-text"><strong>Полный цикл операций</strong>Выдача, возврат, замена, хранение, списание — пошаговые формы</div></div>
+        <div class="si"><div class="si-icon done">✓</div><div class="si-text"><strong>Вся вертикаль военкоматов</strong>Центр → ~1500 ВК МО, каскадное распределение</div></div>
+        <div class="si"><div class="si-icon done">✓</div><div class="si-text"><strong>Дизайн из утверждённых макетов</strong>Полное соответствие согласованному дизайну</div></div>
+        <div class="si"><div class="si-icon done">✓</div><div class="si-text"><strong>Схема интеграции с сервером</strong>Описаны все запросы и форматы данных</div></div>
+      </div>
+      <div class="sc-col">
+        <h3>Следующий этап</h3>
+        <div class="si"><div class="si-icon todo">→</div><div class="si-text"><strong>Сервер и база данных</strong>Настоящие данные вместо демо-режима</div></div>
+        <div class="si"><div class="si-icon todo">→</div><div class="si-text"><strong>Авторизация</strong>Вход по должности и организации, разграничение прав</div></div>
+        <div class="si"><div class="si-icon todo">→</div><div class="si-text"><strong>Электронная подпись</strong>Юридически значимое подписание операций комиссаром</div></div>
+        <div class="si"><div class="si-icon todo">→</div><div class="si-text"><strong>Отчёты и выгрузка в Excel</strong>Полноценная генерация отчётов по любому фильтру</div></div>
+        <div class="si"><div class="si-icon todo">→</div><div class="si-text"><strong>Интеграция с реестрами</strong>Справочник граждан, организационная структура</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let current = 0;
+  const total = document.querySelectorAll('.slide').length;
+  const dotsEl = document.getElementById('dots');
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+
+  function goTo(n) {
+    const slides = document.querySelectorAll('.slide');
+    const dots   = document.querySelectorAll('.dot');
+    slides[current].classList.remove('active');
+    slides[current].classList.add('prev');
+    setTimeout(() => slides[current].classList.remove('prev'), 350);
+    dots[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, n));
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progress-bar').style.width = ((current + 1) / total * 100) + '%';
+    document.getElementById('btn-prev').disabled = current === 0;
+    document.getElementById('btn-next').disabled = current === total - 1;
+  }
+
+  function changeSlide(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight','ArrowDown',' '].includes(e.key)) { e.preventDefault(); changeSlide(1); }
+    if (['ArrowLeft','ArrowUp'].includes(e.key))        { e.preventDefault(); changeSlide(-1); }
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End')  goTo(total - 1);
+  });
+
+  document.querySelectorAll('.scr-img img').forEach(img =>
+    img.addEventListener('click', () => img.classList.toggle('zoomed'))
+  );
+
+  goTo(0);
+</script>
+</body>
+</html>

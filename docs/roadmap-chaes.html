@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Роадмап ЧАЭС — Центр И</title>
+<link rel="stylesheet" href="roadmap-shared.css">
+</head>
+<body class="theme-chaes">
+
+<table>
+  <tr class="section"><td colspan="6">1. Модуль «Поручения»</td></tr>
+  <tr><th>№</th><th>Задача</th><th>Статус</th><th>Срок</th><th>Ответственный</th><th>Примечание</th></tr>
+  <tr class="data"><td class="num">1.1</td><td class="task">Список, создание и редактирование поручений</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">TaskListPage, REST API</td></tr>
+  <tr class="data"><td class="num">1.2</td><td class="task">Жизненный цикл поручения (исполнение, корректировка, завершение)</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">1.3</td><td class="task">Назначение исполнителя, контроль, вложения</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">1.4</td><td class="task">Отчёты по поручениям</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">1.5</td><td class="task">Справочники: отделы, категории, типы, шаблоны поручений</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">1.6</td><td class="task">Уведомления пользователям</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">1.7</td><td class="task">Вход через UAC, роли admin / user</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">gvc/uac-pack</td></tr>
+  <tr class="data"><td class="num">1.8</td><td class="task">Спецификация API (OpenAPI / Swagger)</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">spec/centre.yaml</td></tr>
+  <tr class="data"><td class="num">1.9</td><td class="task">Автоматизация повторяющихся поручений</td><td class="status">В работе</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Бэкенд и cron есть, страницы в UI нет</td></tr>
+
+  <tr class="section"><td colspan="6">2. Заявления ЧАЭС — фронтенд</td></tr>
+  <tr class="data"><td class="num">2.1</td><td class="task">Раздел «Заявления» и переключатель с поручениями</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">2.2</td><td class="task">Формы 10 категорий заявителей (ликвидатор, вдова, инвалид и др.)</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">UI готов</td></tr>
+  <tr class="data"><td class="num">2.3</td><td class="task">Создание заявления «ликвидатор 1986–1990» через API</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">createChernobylLiquidator</td></tr>
+  <tr class="data"><td class="num">2.4</td><td class="task">Список заявлений из базы (вместо mockData)</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Сейчас MockAPI.getFormsForRole</td></tr>
+  <tr class="data"><td class="num">2.5</td><td class="task">Карточка заявления: согласование, возврат на доработку</td><td class="status">В работе</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Часть действий через API, данные из моков</td></tr>
+  <tr class="data"><td class="num">2.6</td><td class="task">Роли из UAC вместо демо-переключателя (ВК / субъект / ОМУ / ГОМУ)</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">2.7</td><td class="task">Единые статусы на фронте и бэкенде</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Расхождение mock и StatementStatusEnum</td></tr>
+  <tr class="data"><td class="num">2.8</td><td class="task">Редактирование черновика заявления</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">API есть, UI не подключён</td></tr>
+  <tr class="data"><td class="num">2.9</td><td class="task">Отклонение заявления и история (timeline)</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">2.10</td><td class="task">Создание заявлений по остальным 9 категориям</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">UI есть, отправка только ликвидатора</td></tr>
+
+  <tr class="section"><td colspan="6">3. Заявления ЧАЭС — бэкенд</td></tr>
+  <tr class="data"><td class="num">3.1</td><td class="task">API заявлений: список, просмотр, обновление, удаление</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">/api/statements</td></tr>
+  <tr class="data"><td class="num">3.2</td><td class="task">Маршрут согласования (на доработку, предварительно, утвердить, отклонить)</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">StatementLifeCycleController</td></tr>
+  <tr class="data"><td class="num">3.3</td><td class="task">Права доступа по ролям (StatementPolicy)</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">3.4</td><td class="task">База данных заявлений и миграции</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">PostgreSQL</td></tr>
+  <tr class="data"><td class="num">3.5</td><td class="task">Тип формы: участник ликвидации 1986–1990</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">1 из 10</td></tr>
+  <tr class="data"><td class="num">3.6</td><td class="task">Остальные 9 типов форм (вдова, укрытие, инвалид, Крым, Донбасс и др.)</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">В enum есть, handlers закомментированы</td></tr>
+  <tr class="data"><td class="num">3.7</td><td class="task">Обязательная валидация полей при создании</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Сейчас поля nullable</td></tr>
+  <tr class="data"><td class="num">3.8</td><td class="task">Автотесты API заявлений</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Тестов по заявлениям нет</td></tr>
+
+  <tr class="section"><td colspan="6">4. Инфраструктура и ввод в эксплуатацию</td></tr>
+  <tr class="data"><td class="num">4.1</td><td class="task">Локальное окружение Docker (Astradock)</td><td class="status">Сделано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Apache, Postgres, Redis, RabbitMQ</td></tr>
+  <tr class="data"><td class="num">4.2</td><td class="task">Боевая конфигурация: .env, очереди, почта</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">В .env.production — sync, debug</td></tr>
+  <tr class="data"><td class="num">4.3</td><td class="task">CI/CD и прогон тестов в пайплайне</td><td class="status">В работе</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">GitLab: только сборка</td></tr>
+  <tr class="data"><td class="num">4.4</td><td class="task">Инструкция развёртывания на prod (Astra Linux)</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">4.5</td><td class="task">Резервное копирование БД и мониторинг</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note"></td></tr>
+  <tr class="data"><td class="num">4.6</td><td class="task">Сквозной сценарий: муниципальный ВК → субъект → ОМУ → ГОМУ</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">Штыгин А.С.</td><td class="note">Блокер для ввода</td></tr>
+  <tr class="data"><td class="num">4.7</td><td class="task">Пилот и акт ввода модуля заявлений ЧАЭС</td><td class="status">Запланировано</td><td class="term"></td><td class="resp">—</td><td class="note"></td></tr>
+</table>
+
+<script src="roadmap-shared.js"></script>
+</body>
+</html>

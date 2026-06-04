@@ -1,0 +1,545 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bso.example/schemas/v1/dashboard-contract.json",
+  "title": "BSO — контракт данных для дашборда",
+  "version": "1.0.0",
+  "description": "Схема сущностей и ответов API для внешнего дашборда. Источник — учёт БСО (бланки строгой отчётности).",
+  "baseUrl": "https://api.bso.example/v1",
+  "defaultTimezone": "Europe/Moscow",
+  "defaultLocale": "ru-RU",
+
+  "enums": {
+    "blank_status": ["in_circulation", "issued", "on_hold", "written_off"],
+    "blank_place": [
+      "at_center",
+      "at_district",
+      "at_omu",
+      "at_vk_subject",
+      "at_vk_mo",
+      "in_transit",
+      "with_recipient",
+      "archived"
+    ],
+    "blank_type": ["military_id", "certificate", "credential"],
+    "operation_type": [
+      "receipt",
+      "transfer",
+      "issue",
+      "storage",
+      "return",
+      "replacement",
+      "write_off"
+    ],
+    "operation_status": ["pending", "approved", "rejected"],
+    "user_role": [
+      "center_operator",
+      "district_operator",
+      "subject_operator",
+      "vkmo_operator",
+      "commissioner",
+      "auditor"
+    ],
+    "org_level": ["center", "district", "omu", "vk_subject", "vk_mo"]
+  },
+
+  "labels_ru": {
+    "blank_status": {
+      "in_circulation": "В обороте",
+      "issued": "Выдан",
+      "on_hold": "На удержании",
+      "written_off": "Списан"
+    },
+    "blank_place": {
+      "at_center": "У центра",
+      "at_district": "У округа",
+      "at_omu": "У ОМУ",
+      "at_vk_subject": "У ВК субъекта",
+      "at_vk_mo": "У ВК МО",
+      "in_transit": "В пути",
+      "with_recipient": "У получателя",
+      "archived": "В архиве"
+    },
+    "blank_type": {
+      "military_id": "Военный билет",
+      "certificate": "Справка",
+      "credential": "Удостоверение"
+    },
+    "operation_type": {
+      "receipt": "Поступление",
+      "transfer": "Перемещение",
+      "issue": "Выдача",
+      "storage": "Сдача на хранение",
+      "return": "Возврат",
+      "replacement": "Замена",
+      "write_off": "Списание"
+    },
+    "operation_status": {
+      "pending": "На согласовании",
+      "approved": "Утверждено",
+      "rejected": "Отклонено"
+    },
+    "user_role": {
+      "center_operator": "Оператор центра",
+      "district_operator": "Оператор округа",
+      "subject_operator": "Оператор субъекта",
+      "vkmo_operator": "Оператор ВК МО",
+      "commissioner": "Военный комиссар",
+      "auditor": "Аудитор"
+    }
+  },
+
+  "entities": {
+    "org_unit": {
+      "table": "org_units",
+      "primaryKey": "id",
+      "fields": {
+        "id": { "type": "string", "example": "vk_mo_0001" },
+        "parent_id": { "type": ["string", "null"], "ref": "org_unit.id" },
+        "level": { "type": "string", "enum": "org_level" },
+        "name": { "type": "string" },
+        "is_active": { "type": "boolean", "default": true }
+      },
+      "hierarchy": ["center", "district", "omu", "vk_subject", "vk_mo"]
+    },
+    "user": {
+      "table": "users",
+      "primaryKey": "id",
+      "fields": {
+        "id": { "type": "string", "format": "uuid" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": "user_role" },
+        "org_unit_id": {
+          "type": ["string", "null"],
+          "ref": "org_unit.id",
+          "description": "Привязка к узлу иерархии (округ, ОМУ, ВК субъекта и т.д.)"
+        },
+        "vkmo_id": {
+          "type": ["string", "null"],
+          "ref": "org_unit.id",
+          "description": "Для vkmo_operator и commissioner"
+        },
+        "is_active": { "type": "boolean" }
+      }
+    },
+    "citizen": {
+      "table": "citizens",
+      "primaryKey": "id",
+      "fields": {
+        "id": { "type": "string" },
+        "full_name": { "type": "string" },
+        "snils": { "type": ["string", "null"] }
+      }
+    },
+    "blank": {
+      "table": "blanks",
+      "primaryKey": "id",
+      "fields": {
+        "id": { "type": "string", "format": "uuid" },
+        "number": {
+          "type": "string",
+          "pattern": "^[А-Я]{2}\\d{6}$",
+          "example": "АА123456",
+          "description": "Две буквы кириллицы + 6 цифр"
+        },
+        "type": { "type": "string", "enum": "blank_type" },
+        "status": { "type": "string", "enum": "blank_status" },
+        "place": { "type": "string", "enum": "blank_place" },
+        "location_label": {
+          "type": "string",
+          "description": "Текстовое описание места (например, «Военкомат МО Москва №1»)"
+        },
+        "vkmo_id": { "type": "string", "ref": "org_unit.id" },
+        "owner_id": { "type": ["string", "null"], "ref": "citizen.id" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      },
+      "indexes": ["number", "vkmo_id", "status", "type"]
+    },
+    "operation": {
+      "table": "operations",
+      "primaryKey": "id",
+      "fields": {
+        "id": { "type": "string", "format": "uuid" },
+        "blank_id": { "type": "string", "ref": "blank.id" },
+        "type": { "type": "string", "enum": "operation_type" },
+        "status": { "type": "string", "enum": "operation_status" },
+        "reason": { "type": "string" },
+        "from_location": { "type": ["string", "null"] },
+        "to_location": { "type": ["string", "null"] },
+        "owner_id": { "type": ["string", "null"], "ref": "citizen.id" },
+        "operator_id": { "type": "string", "ref": "user.id" },
+        "commissioner_id": { "type": ["string", "null"], "ref": "user.id" },
+        "commissioner_signature": { "type": ["string", "null"] },
+        "old_blank_id": { "type": ["string", "null"], "ref": "blank.id" },
+        "new_blank_id": { "type": ["string", "null"], "ref": "blank.id" },
+        "comment": { "type": ["string", "null"] },
+        "operator_comment": { "type": ["string", "null"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "approved_at": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "business_rules": {
+        "requires_commissioner_signature_types": ["issue", "replacement", "storage"],
+        "requires_commissioner_signature_when_status": "pending"
+      }
+    },
+    "blank_series_receipt": {
+      "table": "blank_series_receipts",
+      "description": "Поступление диапазона номеров (загрузка серии)",
+      "fields": {
+        "id": { "type": "string", "format": "uuid" },
+        "range_from": { "type": "string", "pattern": "^[А-Я]{2}\\d{6}$" },
+        "range_to": { "type": "string", "pattern": "^[А-Я]{2}\\d{6}$" },
+        "series_letters": { "type": "string", "maxLength": 2 },
+        "total_count": { "type": "integer", "minimum": 1 },
+        "org_unit_id": { "type": "string", "ref": "org_unit.id" },
+        "operator_id": { "type": "string", "ref": "user.id" },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "blank_series_receipt_line": {
+      "table": "blank_series_receipt_lines",
+      "fields": {
+        "receipt_id": { "type": "string", "ref": "blank_series_receipt.id" },
+        "blank_type": { "type": "string", "enum": "blank_type" },
+        "quantity": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+
+  "relations": [
+    { "from": "org_unit.parent_id", "to": "org_unit.id", "cardinality": "n:0..1" },
+    { "from": "blank.vkmo_id", "to": "org_unit.id", "cardinality": "n:1" },
+    { "from": "blank.owner_id", "to": "citizen.id", "cardinality": "n:0..1" },
+    { "from": "operation.blank_id", "to": "blank.id", "cardinality": "n:1" },
+    { "from": "operation.operator_id", "to": "user.id", "cardinality": "n:1" },
+    { "from": "operation.commissioner_id", "to": "user.id", "cardinality": "n:0..1" },
+    { "from": "operation.owner_id", "to": "citizen.id", "cardinality": "n:0..1" },
+    { "from": "operation.old_blank_id", "to": "blank.id", "cardinality": "n:0..1" },
+    { "from": "operation.new_blank_id", "to": "blank.id", "cardinality": "n:0..1" },
+    { "from": "user.vkmo_id", "to": "org_unit.id", "cardinality": "n:0..1" },
+    { "from": "blank_series_receipt.org_unit_id", "to": "org_unit.id", "cardinality": "n:1" }
+  ],
+
+  "api": {
+    "dashboard": {
+      "GET /dashboard/summary": {
+        "description": "Сводные счётчики бланков по статусам и типам",
+        "query": {
+          "vkmo_id": { "type": "string", "required": false },
+          "org_unit_id": { "type": "string", "required": false },
+          "date_from": { "type": "string", "format": "date", "required": false },
+          "date_to": { "type": "string", "format": "date", "required": false }
+        },
+        "responseSchema": {
+          "type": "object",
+          "required": ["blanks", "generated_at"],
+          "properties": {
+            "scope": {
+              "type": "object",
+              "properties": {
+                "org_unit_id": { "type": ["string", "null"] },
+                "org_unit_name": { "type": ["string", "null"] },
+                "level": { "type": ["string", "null"], "enum": "org_level" }
+              }
+            },
+            "blanks": {
+              "type": "object",
+              "required": ["total", "in_circulation", "issued", "on_hold", "written_off", "by_type"],
+              "properties": {
+                "total": { "type": "integer", "minimum": 0 },
+                "in_circulation": { "type": "integer", "minimum": 0 },
+                "issued": { "type": "integer", "minimum": 0 },
+                "on_hold": { "type": "integer", "minimum": 0 },
+                "written_off": { "type": "integer", "minimum": 0 },
+                "by_type": {
+                  "type": "object",
+                  "properties": {
+                    "military_id": { "type": "integer", "minimum": 0 },
+                    "certificate": { "type": "integer", "minimum": 0 },
+                    "credential": { "type": "integer", "minimum": 0 }
+                  }
+                }
+              }
+            },
+            "operations_pending_signature": { "type": "integer", "minimum": 0 },
+            "generated_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "GET /dashboard/operations-chart": {
+        "description": "Динамика операций по дням для графика",
+        "query": {
+          "days": { "type": "integer", "default": 7, "minimum": 1, "maximum": 90 },
+          "vkmo_id": { "type": "string", "required": false },
+          "org_unit_id": { "type": "string", "required": false }
+        },
+        "responseSchema": {
+          "type": "object",
+          "required": ["period", "series"],
+          "properties": {
+            "period": {
+              "type": "object",
+              "properties": {
+                "days": { "type": "integer" },
+                "from": { "type": "string", "format": "date" },
+                "to": { "type": "string", "format": "date" }
+              }
+            },
+            "vkmo_id": { "type": ["string", "null"] },
+            "series": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["date", "issue", "return", "write_off"],
+                "properties": {
+                  "date": { "type": "string", "format": "date" },
+                  "issue": { "type": "integer", "minimum": 0 },
+                  "return": { "type": "integer", "minimum": 0 },
+                  "write_off": { "type": "integer", "minimum": 0 }
+                }
+              }
+            }
+          }
+        }
+      },
+      "GET /dashboard/distribution-by-org": {
+        "description": "Остатки или поступления по дочерним узлам иерархии",
+        "query": {
+          "parent_org_unit_id": { "type": "string", "required": true },
+          "level": { "type": "string", "enum": "org_level", "required": true }
+        },
+        "responseSchema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["org_unit_id", "org_unit_name", "level", "by_type", "total"],
+            "properties": {
+              "org_unit_id": { "type": "string" },
+              "org_unit_name": { "type": "string" },
+              "level": { "type": "string", "enum": "org_level" },
+              "by_type": {
+                "type": "object",
+                "properties": {
+                  "military_id": { "type": "integer", "minimum": 0 },
+                  "certificate": { "type": "integer", "minimum": 0 },
+                  "credential": { "type": "integer", "minimum": 0 }
+                }
+              },
+              "total": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      },
+      "GET /blanks": {
+        "description": "Список бланков с фильтрами и пагинацией",
+        "query": {
+          "page": { "type": "integer", "default": 1, "minimum": 1 },
+          "per_page": { "type": "integer", "default": 50, "minimum": 1, "maximum": 200 },
+          "vkmo_id": { "type": "string", "required": false },
+          "status": { "type": "string", "enum": "blank_status", "required": false },
+          "type": { "type": "string", "enum": "blank_type", "required": false },
+          "place": { "type": "string", "enum": "blank_place", "required": false },
+          "search": { "type": "string", "required": false, "description": "Поиск по номеру или ФИО владельца" }
+        },
+        "responseSchema": {
+          "type": "object",
+          "required": ["data", "meta"],
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": { "$ref": "#/examples/blank_list_item" }
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "integer" },
+                "per_page": { "type": "integer" },
+                "total": { "type": "integer" },
+                "filters": { "type": "object" }
+              }
+            }
+          }
+        }
+      },
+      "GET /operations": {
+        "description": "Журнал операций",
+        "query": {
+          "blank_id": { "type": "string", "required": false },
+          "status": { "type": "string", "enum": "operation_status", "required": false },
+          "type": { "type": "string", "enum": "operation_type", "required": false },
+          "vkmo_id": { "type": "string", "required": false },
+          "date_from": { "type": "string", "format": "date-time", "required": false },
+          "date_to": { "type": "string", "format": "date-time", "required": false }
+        },
+        "responseSchema": {
+          "type": "object",
+          "required": ["data", "meta"],
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": { "$ref": "#/examples/operation_item" }
+            },
+            "meta": { "type": "object" }
+          }
+        }
+      },
+      "GET /operations/pending-signatures": {
+        "description": "Операции, ожидающие подписи военного комиссара",
+        "query": {
+          "vkmo_id": { "type": "string", "required": false }
+        },
+        "responseSchema": {
+          "type": "array",
+          "items": { "$ref": "#/examples/operation_pending_signature" }
+        }
+      }
+    }
+  },
+
+  "examples": {
+    "dashboard_summary": {
+      "scope": {
+        "org_unit_id": "vk_mo_0001",
+        "org_unit_name": "ВК МО №1",
+        "level": "vk_mo"
+      },
+      "blanks": {
+        "total": 9,
+        "in_circulation": 3,
+        "issued": 2,
+        "on_hold": 1,
+        "written_off": 3,
+        "by_type": {
+          "military_id": 5,
+          "certificate": 3,
+          "credential": 1
+        }
+      },
+      "operations_pending_signature": 5,
+      "generated_at": "2026-05-20T12:00:00+03:00"
+    },
+    "operations_chart": {
+      "period": {
+        "days": 7,
+        "from": "2026-05-14",
+        "to": "2026-05-20"
+      },
+      "vkmo_id": "vk_mo_0001",
+      "series": [
+        { "date": "2026-05-14", "issue": 3, "return": 1, "write_off": 0 },
+        { "date": "2026-05-15", "issue": 5, "return": 2, "write_off": 1 },
+        { "date": "2026-05-16", "issue": 2, "return": 0, "write_off": 0 },
+        { "date": "2026-05-17", "issue": 4, "return": 1, "write_off": 2 },
+        { "date": "2026-05-18", "issue": 1, "return": 3, "write_off": 0 },
+        { "date": "2026-05-19", "issue": 6, "return": 0, "write_off": 1 },
+        { "date": "2026-05-20", "issue": 2, "return": 1, "write_off": 0 }
+      ]
+    },
+    "distribution_by_org": [
+      {
+        "org_unit_id": "vk_sub_001",
+        "org_unit_name": "ВК субъекта №1",
+        "level": "vk_subject",
+        "by_type": { "military_id": 80, "certificate": 25, "credential": 12 },
+        "total": 117
+      }
+    ],
+    "blank_list_item": {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "number": "АА123456",
+      "type": "military_id",
+      "status": "issued",
+      "place": "with_recipient",
+      "location_label": "Военкомат МО Москва №1",
+      "vkmo_id": "vk_mo_0001",
+      "owner": {
+        "id": "citizen_001",
+        "full_name": "Смирнов Дмитрий Александрович"
+      },
+      "created_at": "2026-01-15T10:00:00Z",
+      "updated_at": "2026-02-10T14:30:00Z"
+    },
+    "blanks_list_response": {
+      "data": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440001",
+          "number": "АА123456",
+          "type": "military_id",
+          "status": "issued",
+          "place": "with_recipient",
+          "location_label": "Военкомат МО Москва №1",
+          "vkmo_id": "vk_mo_0001",
+          "owner": {
+            "id": "citizen_001",
+            "full_name": "Смирнов Дмитрий Александрович"
+          },
+          "created_at": "2026-01-15T10:00:00Z",
+          "updated_at": "2026-02-10T14:30:00Z"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 50,
+        "total": 9,
+        "filters": {
+          "status": null,
+          "type": null,
+          "vkmo_id": "vk_mo_0001"
+        }
+      }
+    },
+    "operation_item": {
+      "id": "op1",
+      "blank_id": "1",
+      "blank_number": "АА123456",
+      "type": "issue",
+      "status": "approved",
+      "reason": "Призыв",
+      "from_location": null,
+      "to_location": "Военкомат МО Москва №1",
+      "owner": {
+        "id": "citizen_001",
+        "full_name": "Смирнов Дмитрий Александрович"
+      },
+      "operator": {
+        "id": "user1",
+        "name": "Петров Петр Петрович"
+      },
+      "commissioner": {
+        "id": "user2",
+        "name": "Иванов Иван Иванович",
+        "signature": "Иванов И.И."
+      },
+      "created_at": "2026-02-10T14:30:00Z",
+      "approved_at": "2026-02-10T14:35:00Z"
+    },
+    "operation_pending_signature": {
+      "id": "op4",
+      "blank_id": "3",
+      "blank_number": "АА123458",
+      "type": "issue",
+      "status": "pending",
+      "reason": "Мобилизация",
+      "from_location": "Военкомат МО Москва №1",
+      "to_location": "У получателя (на руках у военнослужащего)",
+      "owner": {
+        "id": "citizen_004",
+        "full_name": "Новиков Павел Михайлович"
+      },
+      "operator": {
+        "id": "user1",
+        "name": "Петров Петр Петрович"
+      },
+      "operator_comment": "Гражданин предоставил полный пакет документов, срочная выдача по решению призывной комиссии.",
+      "created_at": "2026-03-13T10:00:00Z",
+      "requires_commissioner_signature": true
+    },
+    "org_unit": {
+      "id": "vk_mo_0001",
+      "parent_id": "vk_sub_001",
+      "level": "vk_mo",
+      "name": "ВК МО №1",
+      "is_active": true
+    }
+  }
+}
