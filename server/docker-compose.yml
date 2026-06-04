@@ -1,0 +1,23 @@
+# PostgreSQL для разработки БСО (задача инфраструктуры 3.3).
+# Запуск:  docker compose up -d
+# Строка:  postgres://bso:bso@localhost:5433/bso
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: bso-pg
+    environment:
+      POSTGRES_USER: bso
+      POSTGRES_PASSWORD: bso
+      POSTGRES_DB: bso
+    ports:
+      - "5433:5432"
+    volumes:
+      - bso-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bso"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  bso-pg-data:
