@@ -1,13 +1,22 @@
+import { Navigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Users, Building2, Settings } from 'lucide-react';
 import { fetchDashboardSummary } from '../lib/api';
 import { useAsync } from '../lib/useAsync';
+import { currentUser, getHomeRouteForUser } from '../data/mockData';
 
 export function AdminPage() {
   // Берём «Всего бланков» из того же серверного источника, что и дашборд,
   // чтобы числа не расходились.
   const summary = useAsync((signal) => fetchDashboardSummary(undefined, signal), []);
   const totalBlanks = summary.data?.total;
+
+  // Администрирование доступно только оператору центра. Гард — после хуков
+  // (правило react-hooks/rules-of-hooks).
+  if (currentUser.role !== 'center_operator') {
+    return <Navigate to={getHomeRouteForUser(currentUser)} replace />;
+  }
+
   return (
     <div className="space-y-6">
       <div>
