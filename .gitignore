@@ -109,3 +109,9 @@ test-results
 theme-tokens.json
 
 build/
+
+# Python (report/roadmap generators in scripts/)
+.venv-report/
+.venv/
+__pycache__/
+*.pyc
