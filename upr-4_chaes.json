@@ -1,0 +1,59 @@
+{
+    "actual_at": "2025-08-20T00:00:00.000",
+    "author": "upr-4",
+    "created_at": "2025-08-20T16:57:59.146",
+    "data": [
+        {
+            "atr": "z5_vidacha_udos_chaes",
+            "object_code": "00000000",
+            "data": [
+                {
+                    "name": "ГОМУ ГШ",
+                    "object_code": "00000000",
+                    "parent_object_code": null,
+                    "podano": 1200,
+                    "vidano": 1150,
+                    "otkazano": 50,
+                    "vrabote": 5
+                },
+                {
+                    "name": "ЮВО",
+                    "object_code": "07777915",
+                    "parent_object_code": "00000000",
+                    "podano": 100,
+                    "vidano": 90,
+                    "otkazano": 10,
+                    "vrabote": 1
+                },
+                {
+                    "name": "ВК Запорожской области, г. Мелитополь",
+                    "object_code": "07564705",
+                    "parent_object_code": "07777915",
+                    "podano": 50,
+                    "vidano": 30,
+                    "otkazano": 5,
+                    "vrabote": 0
+                },
+                {
+                    "name": "ВК Луганской Народной Республики, г. Луганск",
+                    "object_code": "07566153",
+                    "parent_object_code": "07777915",
+                    "podano": 30,
+                    "vidano": 30,
+                    "otkazano": 5,
+                    "vrabote": 0
+                },
+                {
+                    "name": "ВК Донецкой Народной Республики, г. Донецк",
+                    "object_code": "07567454",
+                    "parent_object_code": "07777915",
+                    "podano": 20,
+                    "vidano": 30,
+                    "otkazano": 0,
+                    "vrabote": 0
+                },
+            ]
+        }
+    ],
+    "version": "1.0"
+}
