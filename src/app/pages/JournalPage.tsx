@@ -64,11 +64,6 @@ const formatDateTime = (iso: string) =>
   });
 
 export function JournalPage() {
-  // Журнал доступен оператору центра и аудитору.
-  if (currentUser.role !== 'center_operator' && currentUser.role !== 'auditor') {
-    return <Navigate to={getHomeRouteForUser(currentUser)} replace />;
-  }
-
   const [refresh] = useState(0);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -112,6 +107,12 @@ export function JournalPage() {
   useEffect(() => {
     setPage(1);
   }, [search, categoryFilter, userFilter, pageSize]);
+
+  // Журнал доступен оператору центра и аудитору. Гард — после всех хуков
+  // (правило react-hooks/rules-of-hooks).
+  if (currentUser.role !== 'center_operator' && currentUser.role !== 'auditor') {
+    return <Navigate to={getHomeRouteForUser(currentUser)} replace />;
+  }
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, pageCount);

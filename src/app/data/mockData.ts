@@ -550,7 +550,7 @@ export const mockOperations: Operation[] = [
   },
 ];
 
-export let mockPendingOperations: Operation[] = [
+export const mockPendingOperations: Operation[] = [
   {
     id: 'op4',
     blank_id: '3',

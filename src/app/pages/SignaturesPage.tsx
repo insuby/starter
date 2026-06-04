@@ -48,10 +48,6 @@ export const SignaturesPage = () => {
   const [detailOpId, setDetailOpId] = useState<string | null>(null);
   const [signOpId, setSignOpId] = useState<string | null>(null);
 
-  if (currentUser.role !== 'vkmo_operator' && currentUser.role !== 'commissioner') {
-    return <Navigate to={getHomeRouteForUser(currentUser)} replace />;
-  }
-
   const isCommissioner = currentUser.role === 'commissioner';
 
   const queue = useAsync(
@@ -69,6 +65,11 @@ export const SignaturesPage = () => {
     (signal) => (detailOp ? fetchBlankCard(detailOp.blank_id, signal) : Promise.resolve(null)),
     [detailOp?.blank_id],
   );
+
+  // Гард роли — после вызова всех хуков (правило react-hooks/rules-of-hooks).
+  if (currentUser.role !== 'vkmo_operator' && currentUser.role !== 'commissioner') {
+    return <Navigate to={getHomeRouteForUser(currentUser)} replace />;
+  }
 
   const signOp = signOpId ? visibleQueue.find((o) => o.id === signOpId) : undefined;
 

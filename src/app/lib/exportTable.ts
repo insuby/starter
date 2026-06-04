@@ -123,7 +123,7 @@ export function exportToPdf<T extends Record<string, unknown>>(
   ${meta.subtitle ? `<p class="subtitle">${escapeHtml(meta.subtitle)}</p>` : ''}
   <p class="meta">Сформировано: ${escapeHtml(generatedAt)} · Записей: ${rows.length}</p>
   ${buildTableHtml(columns, rows)}
-  <script>window.onload = function () { window.focus(); window.print(); };<\/script>
+  <script>window.onload = function () { window.focus(); window.print(); };</script>
 </body>
 </html>`;
 

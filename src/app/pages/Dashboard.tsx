@@ -7,12 +7,13 @@ import { useAsync } from '../lib/useAsync';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export const Dashboard = () => {
+  const summary = useAsync((signal) => fetchDashboardSummary(undefined, signal), []);
+  const chart = useAsync((signal) => fetchOperationsChart({ days: 7 }, signal), []);
+
+  // Гард роли — после вызова всех хуков (правило react-hooks/rules-of-hooks).
   if (currentUser.role !== 'center_operator') {
     return <Navigate to={getHomeRouteForUser(currentUser)} replace />;
   }
-
-  const summary = useAsync((signal) => fetchDashboardSummary(undefined, signal), []);
-  const chart = useAsync((signal) => fetchOperationsChart({ days: 7 }, signal), []);
 
   const stats = summary.data;
 

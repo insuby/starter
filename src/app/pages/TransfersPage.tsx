@@ -26,10 +26,6 @@ const formatDate = (dateString: string) =>
   });
 
 export const TransfersPage = () => {
-  if (!isVkSubjectOperator(currentUser)) {
-    return <Navigate to="/distribution" replace />;
-  }
-
   const fromOrg = currentUser.vk_subject_id as string;
 
   const [recipient, setRecipient] = useState('');
@@ -52,6 +48,11 @@ export const TransfersPage = () => {
   // Последние перемещения.
   const transfers = useAsync((signal) => fetchOperations({ type: 'transfer' }, signal), [refresh]);
   const recentTransfers = (transfers.data ?? []).slice(0, 10);
+
+  // Гард роли — после вызова всех хуков (правило react-hooks/rules-of-hooks).
+  if (!isVkSubjectOperator(currentUser)) {
+    return <Navigate to="/distribution" replace />;
+  }
 
   const handleTransfer = async () => {
     if (!recipient) {
