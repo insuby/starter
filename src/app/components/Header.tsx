@@ -170,6 +170,17 @@ export function Header({ onUserChange }: HeaderProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+            onClick={() => logout()}
+            title="Выйти из учётной записи"
+          >
+            <LogOut className="h-4 w-4" />
+            Выйти
+          </Button>
         </div>
       </div>
     </header>
